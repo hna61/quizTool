@@ -239,7 +239,7 @@ div.qzc__image{
 }
 
 div.qzc__image.loading {
-    background: url(img/ajax-loader.gif) no-repeat center center;
+    background: url(ajax-loader.gif) no-repeat center center;
 }
 
 @media print {
