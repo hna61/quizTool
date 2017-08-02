@@ -8,6 +8,7 @@
  *   
  */
 
+ const serverCall = "php/server-0.0.3.php";
 
 
   function extend( a, b ) {
@@ -101,7 +102,7 @@
     if (pQuiz){
       quizname = pQuiz;
     }
-    var jsonUrl = "write.php?method=getquiz&filename=quizes/" + quizname + ".json";
+    var jsonUrl = serverCall + "?method=getquiz&filename=quizes/" + quizname + ".json";
     this.options.filepath = "quizes/" + quizname + ".json";
     this.options.shortname = quizname;
     console.log("requesting "+ jsonUrl);
@@ -593,9 +594,9 @@
     
     $.ajax({type:"post"
             , data: {method: 'storequiz', store_me: JSON.stringify(obj), filename: filepath, user: this.credentials.user, passwd: this.credentials.passwd}
-            , url: 'write.php'
+            , url: serverCall 
             , complete: function (XMLHttpRequest, textStatus) {
-                            console.log("antwort vom write: "+ XMLHttpRequest.responseText) ;
+                            console.log("Antwort vom write: "+ XMLHttpRequest.responseText) ;
                             if (XMLHttpRequest.responseText.startsWith("OK")){
                               alert ("Speichern erfolgreich");
                             } else {                                          
@@ -611,7 +612,7 @@
     
     $.ajax({type:"post"
             , data: {method: 'login', user: user, passwd: passwd}
-            , url: 'write.php'
+            , url: serverCall 
             , complete: function (XMLHttpRequest, textStatus) {
                             console.log("antwort vom login: "+ XMLHttpRequest.responseText) ;
                             if (XMLHttpRequest.responseText.endsWith("granted.")){
@@ -645,7 +646,7 @@
     
     $.ajax({type:"POST"
             , data: data
-            , url: 'write.php'
+            , url: serverCall 
             , processData: false
             , contentType: false
             , complete: function (XMLHttpRequest, textStatus) {

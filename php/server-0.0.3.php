@@ -10,14 +10,14 @@ ini_set('display_errors', 1);
 
 function getUser($user)
 {
-	$userFile = './users.json';
+	$userFile = '../data/users.json';
 	$userListJson = file_get_contents ($userFile);
 	$userList = json_decode($userListJson, true);
 	return $userList[$user];
 }
 
 function logMe($logtext){
-  $logfile = "./usage.log";
+  $logfile = "../data/usage.log";
   file_put_contents($logfile, date("Y-m-d H:i:s") .", ". $_SERVER['REMOTE_ADDR']. " : ". $logtext . "\r\n", FILE_APPEND );  
 }
 
@@ -51,7 +51,7 @@ if (!empty($method)){
   } else if ($method == 'storequiz'){
     if(!empty($dataToStore) )
     {
-      $filename = "./speicherdatei.json";
+      $filename = "../data/test.json";
       if (!empty($fileToStore)){
         $filename = $fileToStore;
       }
@@ -78,16 +78,6 @@ if (!empty($method)){
       logMe ("Spiel ".$fileToStore." unbekannt.");
       echo '{"name":"neues Quiz", "email":"ah@in-howi.de", "questions": [{"question": "", "img": "", "desc":"", "url":"", "answers": ["","","",""]}]}';
     }
-    
-  } else if ($method == 'uploadImageOriginal'){
-    $newName = $_REQUEST['newName'];
-    $size = $_FILES['file']['size'];    
-    if (move_uploaded_file($_FILES['file']['tmp_name'], "img/".$newName)){
-      // resize image to 300 x 300
-      echo "OK";
-    } else {
-      echo "FEHLER bei ". $newName;
-    } 
     
   } else if ($method == 'uploadImage'){
     // upload and resize
@@ -156,7 +146,7 @@ if (!empty($method)){
         logMe(" do 90 rotate left on ". $newName);
         break;
       }
-      imagejpeg($dstimg, "img/".$newName);
+      imagejpeg($dstimg, "../img/".$newName);
       echo "OK";
     }  else {
       echo "FEHLER beim Speichern von " . $newName;
@@ -174,7 +164,7 @@ if (!empty($method)){
   } else if ($method == 'picinfo'){ 
     $filename =  $_REQUEST['filename'];     
     logMe("picinfo for: " . filename);
-    list ($width,$height,$type) = getimagesize("img/".$filename);
+    list ($width,$height,$type) = getimagesize("../img/".$filename);
     if ($width > $height){
       $x = floor(($width-$height)/2);
       $y = 0;
@@ -192,38 +182,5 @@ if (!empty($method)){
     echo ": x=" . $x .", y=" . $y . ", height=" . $height . ", width=" . $width . ", faktor=" . $resize;
     echo "\r\n";
     
-  } else if ($method == 'picresize'){ 
-    $filename =  $_REQUEST['filename'];     
-    logMe("picinfo for: " . filename);
-    list ($width,$height,$type) = getimagesize("img/".$filename);
-    if ($width > $height){
-      $x = floor(($width-$height)/2);
-      $y = 0;
-      $width = $height;
-    } else {
-      $x = 0;
-      $y = floor(($height - $width)/2);
-      $height = $width;
-    }
-    $resize = 300 / $height;
-    
-    $srcimg = imagecreatefromjpeg("img/".$filename);
-    $dstimg = imagecreatetruecolor (300,300);
-    if ($srcimg && $dstimg && imagecopyresampled ($dstimg, $srcimg, 0, 0, $x, $y, 300, 300, $height, $width)){
-      echo "imagecopyresampled OK\r\n";
-      imagejpeg($dstimg, "img/300x300_".$filename);
-    }  else {
-      echo "irgendwas ist schiefgegangen\r\n";
-    }
-    
-    echo "Änderung für ";
-    echo $filename;
-    echo ": x=" . $x .", y=" . $y . ", height=" . $height . ", width=" . $width . ", faktor=" . $resize;
-    echo "\r\n";
-    
-  } else {
-    logMe("unknown method: " . $method);
-    echo "method ";
-    echo $method;
   }
 } 
