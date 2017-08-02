@@ -94,7 +94,7 @@ if (!empty($method)){
     
   } else if ($method == 'uploadImage'){
     // upload and resize
-    $newName = $_REQUEST['newName'];
+    $quiz = $_REQUEST['quiz'];
     $tmpFile = $_FILES['file']['tmp_name'];
     
     $exif = exif_read_data($tmpFile);
@@ -124,44 +124,49 @@ if (!empty($method)){
 
         case 2: // horizontal flip
         //$resizeObj->flipImage($path,1);
-        logMe("cannot do horizontal flip on ". $newName);
+        logMe("cannot do horizontal flip on ". $tmpFile);
         break;
 
         case 3: // 180 rotate left
         $dstimg = imagerotate($dstimg, 180, 0); 
-        logMe(" do 180 rotate left on ". $newName);
+        logMe(" do 180 rotate left on ". $tmpFile);
         break;
 
         case 4: // vertical flip
         //$resizeObj->flipImage($path,2);  
-        logMe("cannot do vertical flip on ". $newName);
+        logMe("cannot do vertical flip on ". $tmpFile);
         break;
 
         case 5: // vertical flip + 90 rotate right
         //$resizeObj->flipImage($path, 2);
         //$resizeObj->rotateImage($path, -90);  
-        logMe("cannot do vertical flip + 90 rotate right on ". $newName);
+        logMe("cannot do vertical flip + 90 rotate right on ". $tmpFile);
         break;
 
         case 6: // 90 rotate right
         $dstimg = imagerotate($dstimg, -90, 0); 
-        logMe(" do 90 rotate right on ". $newName);
+        logMe(" do 90 rotate right on ". $tmpFile);
         break;
 
         case 7: // horizontal flip + 90 rotate right
         //$resizeObj->flipImage($path,1);    
         //$resizeObj->rotateImage($path, -90); 
-        logMe("cannot do horizontal flip + 90 rotate right on ". $newName);
+        logMe("cannot do horizontal flip + 90 rotate right on ". $tmpFile);
         break;
 
         case 8:    // 90 rotate left
         $dstimg = imagerotate($dstimg, 90, 0); 
-        logMe(" do 90 rotate left on ". $newName);
+        logMe(" do 90 rotate left on ". $tmpFile);
         break;
       }
+      $newName = uniqid($quiz . '_') . '.jpg';
+      while (file_exists("../img/" . $newName)) {
+         $newName = uniqid($quiz . '_') . '.jpg';
+      }
       imagejpeg($dstimg, "../img/".$newName);
-      echo "OK";
+      echo "OK " .$newName;
     }  else {
+      logMe ("FEHLER beim Speichern von " . $newName);
       echo "FEHLER beim Speichern von " . $newName;
     }
     

@@ -33,3 +33,5 @@ Konfigurationen verhindern, dass das Login funktioniert.
 * Verwaltung im github
 * Verbesserte Pfade auf Server
 * index.html als Startseite
+* Passwörter als Hash gespeichert
+* Problem mit Bildern nach dem Löschen von Fragen behoben

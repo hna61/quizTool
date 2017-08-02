@@ -633,12 +633,11 @@
     
     var filename = $("#edit_imageFile").val();
     var endung = filename.substr(filename.lastIndexOf('.')+1, filename.length);
-    var newName = this.options.shortname+"_Bild-"+this.questionId+"."+endung;
     
     var data = new FormData();
     data.append('file', $("#edit_imageFile")[0].files[0]);  
     data.append ('method', "uploadImage"); 
-    data.append ('newName', newName);
+    data.append ('quiz', this.options.shortname);
     data.append ('user', this.credentials.user);
     data.append ('passwd', this.credentials.passwd);
     
@@ -650,8 +649,9 @@
             , contentType: false
             , complete: function (XMLHttpRequest, textStatus) {
                             console.log("antwort vom upload: "+ XMLHttpRequest.responseText) ;
-                            if (XMLHttpRequest.responseText == "OK"){
+                            if (XMLHttpRequest.responseText && XMLHttpRequest.responseText.startsWith("OK ")){
                               // setze Bild-Variable
+                              var newName = XMLHttpRequest.responseText.substr(3);
                               console.log ("setze Bild auf img/"+newName);
                               $("#edit_image").val("img/"+newName);
                               alert ("Bild erfolgreich gespeichert.");
