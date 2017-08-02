@@ -51,25 +51,23 @@ if (!empty($method)){
   } else if ($method == 'storequiz'){
     if(!empty($dataToStore) )
     {
-      $filename = "../data/test.json";
-      if (!empty($fileToStore)){
-        $filename = $fileToStore;
-      }
+      $fileToStore = "../quizes/" . $_REQUEST['quiz'] . ".json";
       // write file
       if (isGranted()){
         logMe ("Spiel ".$fileToStore." gespeichert.");
-        file_put_contents($filename, json_encode (json_decode ($dataToStore),JSON_PRETTY_PRINT));
-      	echo "OK, written to ";
-        echo $filename  ;
+        file_put_contents($fileToStore, json_encode (json_decode ($dataToStore),JSON_PRETTY_PRINT));
+      	echo "OK, quiz saved to ";
+        echo $fileToStore  ;
       } else {   
         logMe ("Spiel ".$fileToStore." keine Speicherberechtigung.");
-        echo "FEHLER: keine Berechtigung zum Speichern von ".$filename;
+        echo "FEHLER: keine Berechtigung zum Speichern von ".$fileToStore;
       }
     } else {
       echo "FEHLER: keine Daten zum Speichern";
     }  
     
   } else if ($method == 'getquiz'){
+    $fileToStore = "../quizes/" . $_REQUEST['quiz'] . ".json";
     $content = file_get_contents ($fileToStore);
     if ($content){   
       logMe ("Spiel ".$fileToStore." geladen.");

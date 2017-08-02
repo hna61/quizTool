@@ -102,7 +102,7 @@
     if (pQuiz){
       quizname = pQuiz;
     }
-    var jsonUrl = serverCall + "?method=getquiz&filename=quizes/" + quizname + ".json";
+    var jsonUrl = serverCall + "?method=getquiz&quiz=" + quizname ;
     this.options.filepath = "quizes/" + quizname + ".json";
     this.options.shortname = quizname;
     console.log("requesting "+ jsonUrl);
