@@ -4,10 +4,13 @@
  *  
  *  Author(s): Andreas Heidemann (2017-), 
  *  License: MIT  
- *  $Revision: $
  */
  
 ini_set('display_errors', 1);
+
+$VERSION="0.0.3";
+
+logMe ($VERSION);
 
 function getUser($user)
 {
