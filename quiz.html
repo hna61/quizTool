@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+<head>  
+  <meta charset="utf-8">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+  <!-- css -->
+  <link rel="stylesheet" href="css/quiz.css">
+  
+
+ <!-- js -->  
+  <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+  <!-- <script src="js/classList.js"></script> -->
+  <script src="js/quiz.js"></script>
+  
+  <!-- start memory! -->
+  <script>
+   function startview(){
+      var myQuiz = new Quiz({ });
+      myQuiz.load("howiquiz", function(){myQuiz.startup();});
+      
+    };
+  </script>
+  
+</head>
+<body onload = "startview()">
+<!--
+<h1 class="header"><img src="img/logo.png" alt="Quiz" title="Spielerisches vom Historischen Verein Holzwickede" /></h1>
+-->
+
+	<noscript><div class='noindex'>Möglicherweise versuchen Sie, mit einem gesicherten Browser auf dem Server auf diese Website zuzugreifen. Aktivieren Sie Skripts, und laden Sie diese Seite dann erneut.</div></noscript>
+
+<div id="container" class="container">
+  <div id="noscriptarea" >
+  <h1>Kein Spiel</h1>
+  <noscript><p>Ihr Browser beherrscht kein Javascript oder Sie haben es deaktiviert.</p>
+  <p>Dieses Spiel basiert auf Javascript. Rufen sie die Seite bitte in einer Umgebung auf, in der JavaScript lauffähig ist.</p>
+  </noscript>
+  <p id='qzi__nogame' style='visible: none;'>Noch ist kein Spiel geladen. Das kann daran liegen, dass der Server, der die Fragen bereitstellt, 
+  überlastet ist oder dass es das gewünschte Quiz nicht gibt.
+  </p>
+  </div>
+  <div id="gamearea" class="invisible">  
+    <div class='qzc__titlearea'> 
+    <h1 id='qzi_title'>QUIZ</h1>
+    </div>
+    <div  id='qzi__scorearea' class='qzc__scorearea'>
+      <div id='qzi__score' style='float: right;'>0</div><div style='float: right;'> Punkte:&nbsp;</div>
+    </div>
+    <div id='qzi__questionarea' class='qzc__questionarea'>
+      <div class='qzc__image invisible loading'></div>
+      <div id='qzi__question' class='qzc__question'></div>
+    </div>
+    <div  id='qzi__answerarea' class='qzc__answerarea'>
+      <div id='qzi__answer1' class='qzc__answer'></div>
+      <div id='qzi__answer2' class='qzc__answer'></div>
+      <div id='qzi__answer3' class='qzc__answer'></div>
+      <div id='qzi__answer4' class='qzc__answer'></div>
+    </div>
+    <div id='qzi__failarea' class='qzc__failarea'>
+      <div id='qzi__result' class='qzc__result'>FALSCH - Bitte noch einmal versuchen ...</div>
+    </div>
+    <div id='qzi__descarea' class='qzc__descarea'>
+      <div id='qzi__result' class='qzc__result'>RICHTIG!</div>
+      <div id='qzi__desc' class='qzc__desc'></div>
+      <div  class='qzc__link'><a href='' id='qzi__link' target='_blank'>weitere Informationen ...</a></div>
+      <div id='qzi__weiter' class='qzc__button' >WEITER</div>
+      <div id='qzi__verbessern' class='qzc__button' title='Verbesserungsidee per Mail schicken' >Verbesserungsvorschlag</div>
+    </div>
+    <div id='qzi__finalarea' class='qzc__finalarea'>
+      <div id='qzi__finalstate' class='qzc__desc'>Spiel l&auml;uft</div>
+      <div id='qzi__nochmal' class='qzc__button' title='das Quiz zurücksetzen und erneut spielen' >Nochmal</div>
+      <div id='qzi__print' class='qzc__button invisible' >Drucken</div>
+      <div id='qzi__mail' class='qzc__button' >Prahlen per Mail</div>
+      <div id='qzi__whatsapp' class='qzc__button' >Prahlen per Whatsapp</div>  
+      <div id='qzi__edit' class='qzc__button invisible' title='das Quiz bearbeiten' >Quiz bearbeiten</div>
+      <div id='qzi__neufragesenden' class='qzc__button' title='einen Fragenvorschlag per E-Mail senden' >Neue Frage einsenden</div>
+    </div>
+  </div>
+  <div id="imgarea" class="modal">
+    <img id="qzi__editimage" src="" title="Bild" alt="Bild"/>
+    <div id="qzi__closeimg" class="qzc__button" >schliessen</div>
+  </div>
+  <div id="editarea" class="invisible">
+    <div class='qzc__titlearea'>
+      <h1 id='qzi_title'>Titel: <input id='edit_title'  size='50'/></h1>
+      <p>E-Mail des Verantwortlichen: <input id='edit_email'  size='50'/></p>
+    </div>  
+    <div class='qzc__scorearea'>
+    <div id='qzi__qcount' style='float: right;'>0</div><div style='float: right;'> Frage:&nbsp;</div>
+    </div>
+    <div id='qzi__questionarea' class='qzc__questionarea'>
+    <div id='qzi__question' class='qzc__question'>Frage: <input id='edit_frage' size='80'/></div>
+    <div id='qzi__editimage' class='qzc__question'>Bilddatei: <input id='edit_image' size='50'/>
+      <div id="qzi__showimg" class="qzc__button" title="Bild anzeigen">anzeigen</div>
+    </div>
+    <input type="file" id="edit_imageFile" />
+    <div id='qzi__upload' class='qzc__button' title='Bilddatei hochladen' >Upload</div>
+    </div>
+    <div  id='qzi__answerarea' class='qzc__answerarea'>
+    <div id='qzi__answer1' class='qzc__answer'>korrekte Antwort: <input id='edit_antwort1' size='50'/></div>
+    <div id='qzi__answer2' class='qzc__answer'>falsche Antwort: <input id='edit_antwort2'  size='50'/></div>
+    <div id='qzi__answer3' class='qzc__answer'>falsche Antwort: <input id='edit_antwort3'  size='50'/></div>
+    <div id='qzi__answer4' class='qzc__answer'>falsche Antwort: <input id='edit_antwort4'  size='50'/></div>
+    </div>
+    <div id='qzi__descarea' class='qzc__descarea'>
+    <div id='qzi__desc' class='qzc__desc'>Erl&auml;uterung: <textarea id='edit_erlaeuterung'  rows='5' cols='60'></textarea></div>
+    <div id='qzi__link' class='qzc__desc'>Info-URL: <input id='edit_link' size='80'/></div>
+    </div>
+    <div class='qzc__buttonarea'>
+    <div id='qzi__back' class='qzc__button' title='die vorhergehende Frage anzeigen und bearbeiten'>vorige Frage</div>
+    <div id='qzi__next' class='qzc__button' title='die nächste Frage anzeigen und bearbeiten' >n&auml;chste Frage</div>
+    <div id='qzi__neu' class='qzc__button' title='eine neue Frage anlegen und bearbeiten' >neue Frage</div>
+    <div id='qzi__weg' class='qzc__button' title='die angezeigte Frage löschen und die nächste bearbeiten' >Frage l&ouml;schen</div>
+    <div id='qzi__save' class='qzc__button' title='den aktuellen Stand des Quiz speichern' >Speichern</div>
+    <div id='qzi__play' class='qzc__button' title='das Quiz spielen (ist der Stand schon gespeichert?)' >Spielen</div>
+    </div>
+  </div>
+  <div id="loginarea" class="invisible">
+  <h1 class='titel'>Login</h1>
+  <p>
+  Zum Bearbeiten der Quiz-Fragen müssen Sie sich mit Benutzernamen und Kennwort anmelden.
+  Zugriffskennwörter können per E-Mail angefragt werden bei 
+  <a href="mailto:andreas.heidemann@in-howi.de?subject=Zugriffskennwort%20fuer%20ein%20Quiz%20beantragen" title="Zugriffskennwort beantragen">Andreas Heidemann</a>.
+  </p>
+    <div class='qzc__loginarea'>
+      <table>
+      <tr><th class='param'>Name: </th><td><input id='edit_name'  size='30'/></td></tr>
+      <tr><th class='param'>Passwort: </th><td><input type='password' id='edit_pwd'  size='30'/></td></tr>
+      </table>
+    </div>
+    <div class='qzc__buttonarea'>
+    <div id='qzi__login' class='qzc__button' title='anmelden'>Anmelden zum Bearbeiten</div>
+    <div id='qzi__play2' class='qzc__button' title='das Quiz spielen (ist der Stand schon gespeichert?)' >nur Spielen (ohne Anmeldung)</div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

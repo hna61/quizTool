@@ -1,0 +1,257 @@
+/* === FONTFACE ===    
+@font-face { font-family: 'germtype'; src: url('./germtype.ttf') format('truetype'); }
+@font-face { font-family: 'dinalt'; src: url('./din1451alt.ttf') format('truetype'); }
+                         */
+/* =============================================================================
+  RESET, BOX SIZING, & CLEARFIX
+============================================================================= */
+html, body, div, span, h1, h2, h3, h4, h5, h6, p, a, small, img {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font: inherit;
+}
+
+*,
+*::before,
+*::after {
+  -moz-box-sizing: border-box;
+       box-sizing: border-box;
+}
+
+.clearfix:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+.param {
+  font-size: 130%;
+}
+
+.titel {
+  font-size: 200%;
+}
+
+/* =============================================================================
+  BASE
+============================================================================= */
+body,
+html {
+  height: 100%;
+}
+
+body {
+  color: #787a80;
+  background-color: #d8d3a9;
+  font-family: "dinalt", serif;
+  font-size: 18px;
+}
+
+a {
+  text-decoration: none;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+/* =============================================================================
+  LAYOUT
+============================================================================= */
+/* wrapper */
+.wrapper {
+  margin: 0 auto;
+  width: 100%;
+  min-width: 480px;
+}
+
+/* container */
+.container {
+  margin: 10px auto;
+  width: 100%;
+  max-width: 1024px;
+}
+
+/* header */
+.header {
+  padding: 10px 10px 10px 40px;
+}
+
+.header__logo {
+  float: left;
+  margin-left: -30px;
+  width: 950px;
+  height: 126px;
+}
+
+.header__title {
+  float: right;
+  color: #fff;
+  font-size: 18px;
+  line-height: 30px;
+}
+
+/* content */
+.content {
+  padding: 20px;
+  background-color: #fff;
+}
+
+/**
+ * Game buttons
+ *
+ * A simple helper class for game buttons. Edit at your will.
+ */
+ 
+.qzc__answerarea {
+  margin: 10px;
+  position: relative;
+}
+
+.qzc__answer {
+  margin: 10px;
+  display: inline-block;
+  padding: 5px;
+  text-align: center;
+  color: #fff;
+  /*font-family: "dinalt", serif;*/
+  font-size: 130%;
+  appearance: none;
+  background: #909090; //#ff3c50;
+  border: none;
+  border-radius: 6px;
+  box-shadow: none;
+  cursor: pointer;
+  width: 95%;
+}
+   
+
+.qzc__yes {  
+  background: #3cff50 ;
+}
+
+.qzc__no {
+  background: #ff3c50 ;
+}
+
+/**
+ * Game buttons
+ *
+ * A simple helper class for game buttons. Edit at your will.
+ */
+.qzc__button {
+  margin: 10px;
+  display: inline-block;
+  padding: 5px;
+  color: #fff;
+  /*font-family: "dinalt", serif;*/
+  font-size: 130%;
+  appearance: none;
+  background: #3c50ff;
+  border: none;
+  border-radius: 6px;
+  box-shadow: none;
+  cursor: pointer;
+}
+
+.qzc__buttonpressed {
+  background: #888888;
+}
+
+#qzi__finalarea {
+  display:none;   
+  margin-left: 10px;  
+  margin-right: 10px;
+  padding: 5px 5px 5px 5px important;
+  padding-top: 10px;
+  padding-left: 5px;
+  padding right: 5px;
+}
+
+.qzc__titlearea .qzc__descarea {
+  margin: 10px;
+  padding: 5px 5px 5px 5px important;
+  padding-top: 10px;
+  padding-left: 5px;
+  padding right: 5px;
+}
+
+.qzc__desc {
+  padding: 5px 5px 5px 5px important;
+  margin: 10px;
+}
+
+.qzc__questionarea {
+  margin: 10px;
+  font-size: 130%;
+}
+
+
+.qzc__failarea {
+  display: none;
+}
+
+.qzc__scorearea {
+  padding-right: 20px;
+}
+
+#qzi_title {
+  font-size: 150%;
+}
+
+#qzi__image {
+  max_width:300px; 
+  max_height:300px;
+  width: 300px;
+  height: 300px; 
+}
+
+.printheader {
+  display: none;  
+  text-align: center;
+  font-size: 60px;
+  font-weight: bold;
+}
+
+.invisible {
+  display: none;
+}
+
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.9);
+}
+
+div.qzc__image{
+    width: 300px;
+    height: 300px;
+}
+
+div.qzc__image.loading {
+    background: url(img/ajax-loader.gif) no-repeat center center;
+}
+
+@media print {
+  .printheader {
+    display: block;
+  }
+  
+  body {
+    margin: 10;
+  }
+  
+  .noprint {
+    display: none;
+  }
+}
