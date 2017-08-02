@@ -4,6 +4,7 @@
  *  
  *  Author(s): Andreas Heidemann (2017-), 
  *  License: MIT  
+ *  $Revision: $
  */
  
 ini_set('display_errors', 1);
