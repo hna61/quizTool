@@ -1,4 +1,4 @@
 {
-	"user1": { "passwd": "beiSpiel", "email":"user1@example.tld" },
-	"user2": { "passwd": "beiSpiel", "email":"user2@example.tld" }
+	"user1": { "passwd": "$2y$10$2o.q71fEcP9MN4RCR841S.gqRThyexS4p/HO4xocLh9ayx4z7WXGS", "email":"user1@example.tld" },
+	"user2": { "passwd": "$2y$10$Yu0ZNb8aTkuZWHlHwttt/OuH2QVjtLMpyjwGkOHLz1c975gLiIFOK", "email":"user2@example.tld" }
 } 

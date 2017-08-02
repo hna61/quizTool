@@ -38,7 +38,7 @@ html {
 }
 
 body {
-  color: #787a80;
+  color:            #909090;
   background-color: #d8d3a9;
   font-size: 18px;
 }
@@ -78,7 +78,7 @@ img {
   color: #fff;
   font-size: 130%;
   appearance: none;
-  background: #909090; //#ff3c50;
+  background: #909090; 
   border: none;
   border-radius: 6px;
   box-shadow: none;

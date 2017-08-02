@@ -25,7 +25,7 @@ function isGranted(){
   $user =  $_REQUEST['user'];
   $pwd =   $_REQUEST['passwd']; 
   $UserObj = getUser($user);
-  return ($UserObj && $pwd == $UserObj["passwd"]);
+  return ($UserObj && password_verify($pwd,$UserObj["passwd"]));
 }
 
 $dataToStore = $_REQUEST['store_me'];
@@ -47,6 +47,21 @@ if (!empty($method)){
         echo  $user;
         echo " rejected!";
     }
+    
+  } else if ($method == 'gethash'){
+    $user =  $_REQUEST['user'];
+    $pwd  =  $_REQUEST['passwd']; 
+    $hash =  password_hash($pwd, PASSWORD_DEFAULT);
+    logMe($user . ", " . $hash) ;
+    echo "passwordhash for ";
+    echo  $user;
+    echo " generated and ";
+    if (password_verify($pwd, $hash)){
+      echo "verified";
+    } else {
+      echo "failed";
+    }
+    
     
   } else if ($method == 'storequiz'){
     if(!empty($dataToStore) )
