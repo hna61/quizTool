@@ -23,6 +23,9 @@ Zum Installieren einfach den Inhalt dieses Repositories irgendwo
 auf dem Webspace ablegen. 
 
 ### Konfigurieren
+Die Datei data/users-example.json nach data/users.json kopieren und die 
+gewünschten Benutzer konfigurieren. Die Syntax entspricht JSON. Falsche
+Konfigurationen verhindern, dass das Login funktioniert. 
 
 ## Changelog
 
