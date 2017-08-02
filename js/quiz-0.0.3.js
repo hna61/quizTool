@@ -103,7 +103,6 @@
       quizname = pQuiz;
     }
     var jsonUrl = serverCall + "?method=getquiz&quiz=" + quizname ;
-    this.options.filepath = "quizes/" + quizname + ".json";
     this.options.shortname = quizname;
     console.log("requesting "+ jsonUrl);
 
@@ -143,7 +142,6 @@
   Quiz.prototype.save = function(baseurl){
   	console.log("save: "+JSON.stringify(this.options));
     var qz = {};
-    qz.filepath = this.options.filepath;
     qz.name = this.options.name;
     qz.email = this.options.email;
     qz.copyright  = this.options.copyright;
@@ -156,7 +154,7 @@
       q.url      = arr[ix].url;
       return q;
     } )
-  	this.toServer(qz, qz.filepath);
+  	this.toServer(qz, this.options.shortname);
   };
   
   /**
@@ -199,8 +197,6 @@
       }
   };
   
-  
-  
   /**
    * Load Memory images from json config file
    */
@@ -213,7 +209,6 @@
       $("#gamearea").addClass("invisible");
       $("#editarea").removeClass("invisible"); 
       $("#loginarea").addClass("invisible");
-      var thisquiz = this.options.filepath;
   };
   
   // initialize & display game constants 
@@ -589,11 +584,15 @@
       }
   };
   
- Quiz.prototype.toServer = function (obj,filepath){ 
+ Quiz.prototype.toServer = function (obj,shortname){ 
     console.log("daten speichern auf server");
     
     $.ajax({type:"post"
-            , data: {method: 'storequiz', store_me: JSON.stringify(obj), filename: filepath, user: this.credentials.user, passwd: this.credentials.passwd}
+            , data: {method: 'storequiz'
+                    , store_me: JSON.stringify(obj)
+                    , quiz: shortname
+                    , user: this.credentials.user
+                    , passwd: this.credentials.passwd}
             , url: serverCall 
             , complete: function (XMLHttpRequest, textStatus) {
                             console.log("Antwort vom write: "+ XMLHttpRequest.responseText) ;
