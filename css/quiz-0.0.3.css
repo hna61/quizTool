@@ -150,17 +150,11 @@ img {
 
 .qzc__scorearea {
   padding-right: 20px;
+  float: right;
 }
 
 #qzi_title {
   font-size: 150%;
-}
-
-#qzi__image {
-  max_width:300px; 
-  max_height:300px;
-  width: 300px;
-  height: 300px; 
 }
 
 .printheader {
@@ -187,9 +181,13 @@ img {
     background-color: rgba(0,0,0,0.9);
 }
 
-div.qzc__image{
-    width: 300px;
-    height: 300px;
+div.qzc__image{ 
+  margin-left:  auto;
+  margin-right: auto;
+  float:  unset;
+  padding:20px;
+  width: 300px;
+  height: 300px;
 }
 
 div.qzc__image.loading {
