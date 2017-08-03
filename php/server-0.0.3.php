@@ -9,6 +9,8 @@
 ini_set('display_errors', 1);
 
 $VERSION="0.0.3";
+$QUIZDIR="../data/quizes/";
+$IMGDIR="../data/img/";
 
 logMe ($VERSION);
 
@@ -38,7 +40,7 @@ function registerUser($username, $passwd, $email){
 	$pin = "4711"; /* TODO: richtiger Zufallswert */
 	$newUser = (object) ['passwd' => $passwd, 'email'=> $email];
 	setUser($username,$newUser);
-	mailPin($newUser=>email, $newUser=>pin);
+	mailPin($newUser['email'], $newUser['pin']);
 }
 
 function mailPin($email, $pin){
@@ -53,6 +55,20 @@ function mailPin($email, $pin){
 		. $pin
 		. "\r\n\r\n-Dein Server-";
 	mailOut($email, $subject, $body);
+}
+
+function sendImg($image){
+  $filePath = "../data/img/" . basename($image);
+  $info = getimagesize($filePath);
+  if ($info && $info['mime']){
+    logMe("lade " . $filePath);
+    header("Content-Type: " . $info['mime']);  
+    readfile ($filePath);
+  } else {                     
+    logMe("verzweifle an " . $filePath);
+    http_response_code(404);
+    echo ("Datei ". $filePath ." nicht vorhanden.");
+  }   
 }
 	
 
@@ -109,7 +125,7 @@ if (!empty($method)){
   } else if ($method == 'storequiz'){
     if(!empty($dataToStore) )
     {
-      $fileToStore = "../quizes/" . $_REQUEST['quiz'] . ".json";
+      $fileToStore = $QUIZDIR. $_REQUEST['quiz'] . ".json";
       // write file
       if (isGranted()){
         logMe ("Spiel ".$fileToStore." gespeichert.");
@@ -125,7 +141,7 @@ if (!empty($method)){
     }  
     
   } else if ($method == 'getquiz'){
-    $fileToStore = "../quizes/" . $_REQUEST['quiz'] . ".json";
+    $fileToStore = $QUIZDIR . $_REQUEST['quiz'] . ".json";
     $content = file_get_contents ($fileToStore);
     if ($content){   
       logMe ("Spiel ".$fileToStore." geladen.");
@@ -134,6 +150,11 @@ if (!empty($method)){
       logMe ("Spiel ".$fileToStore." unbekannt.");
       echo '{"name":"neues Quiz", "email":"ah@in-howi.de", "questions": [{"question": "", "img": "", "desc":"", "url":"", "answers": ["","","",""]}]}';
     }
+    
+  } else if ($method == 'getimage'){
+    $imageFile =  $_REQUEST['image'];
+    logMe ("Lade Bild: ". $imageFile);
+    sendImg($imageFile);
     
   } else if ($method == 'uploadImage'){
     // upload and resize
@@ -203,11 +224,15 @@ if (!empty($method)){
         break;
       }
       $newName = uniqid($quiz . '_') . '.jpg';
-      while (file_exists("../img/" . $newName)) {
+      while (file_exists($IMGDIR . $newName)) {
          $newName = uniqid($quiz . '_') . '.jpg';
       }
-      imagejpeg($dstimg, "../img/".$newName);
-      echo "OK " .$newName;
+      if (imagejpeg($dstimg, $IMGDIR . $newName)){
+        echo "OK " .$newName;
+      } else {  
+        logMe ("FEHLER beim Speichern unter " .$IMGDIR .  $newName);
+        echo "FEHLER beim Speichern unter " .$IMGDIR . $newName;
+      }
     }  else {
       logMe ("FEHLER beim Speichern von " . $newName);
       echo "FEHLER beim Speichern von " . $newName;

@@ -56,6 +56,10 @@
       return false;
     }
   }
+  
+  function getImagePath(path){
+    return serverCall + "?method=getimage&image="+path;
+  }
 
   /**
    * Quiz constructor
@@ -375,7 +379,7 @@
   };
 
   Quiz.prototype.editViewImg = function (){
-    $("#qzi__editimage").attr("src", $("#edit_image").val());
+    $("#qzi__editimage").attr("src", getImagePath($("#edit_image").val()));
     $("#imgarea").show();
   }
 
@@ -423,7 +427,7 @@
           console.log("kann Bild "+q.img+" nicht laden");
           alert("kann Bild nicht laden");
         })
-        .attr("src", q.img);
+        .attr("src", getImagePath(q.img));
         $(".qzc__image").removeClass("invisible");
         $(".qzc__image").addClass("loading");
       } else {
