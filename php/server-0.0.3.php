@@ -8,6 +8,10 @@
  
 ini_set('display_errors', 1);
 
+$VERSION="0.0.3";
+
+logMe ($VERSION);
+
 function getUser($user)
 {
 	$userFile = '../data/users.json';
@@ -16,9 +20,48 @@ function getUser($user)
 	return $userList[$user];
 }
 
+function setUser($username, $User)
+{
+	$userFile = '../data/users.json';
+	$userListJson = file_get_contents ($userFile);
+	$userList = json_decode($userListJson, true);
+	$userList[$username] = $User;
+  file_put_contents($userFile, json_encode ($userList,JSON_PRETTY_PRINT));
+}
+
+function addUser($username, $passwd, $email){
+	$newUser = (object) ['passwd' => $passwd, 'email'=> $email];
+	setUser($username,$newUser);
+}
+
+function registerUser($username, $passwd, $email){
+	$pin = "4711"; /* TODO: richtiger Zufallswert */
+	$newUser = (object) ['passwd' => $passwd, 'email'=> $email];
+	setUser($username,$newUser);
+	mailPin($newUser=>email, $newUser=>pin);
+}
+
+function mailPin($email, $pin){
+	$subject = "Zugang zum Quiz-Server";
+	$body = "Hallo \r\n\r\n"
+		. "du musst den Zugang zum Quiz-Server noch mit einer"
+		. " PIN bestätigen.\r\n\r\n"
+		. "Die PIN ist    "
+		. $pin . ".\r\n\r\n"
+		. "Bitte nutze den folgenden Link dazu:\r\n"
+		. "* http://p.in-howi.de/kobel/quiztest/index.php?pin="
+		. $pin
+		. "\r\n\r\n-Dein Server-";
+	mailOut($email, $subject, $body);
+}
+	
+
 function logMe($logtext){
   $logfile = "../data/usage.log";
-  file_put_contents($logfile, date("Y-m-d H:i:s") .", ". $_SERVER['REMOTE_ADDR']. " : ". $logtext . "\r\n", FILE_APPEND );  
+  file_put_contents($logfile, date("Y-m-d H:i:s") 
+                              .", ". $_SERVER['REMOTE_ADDR']
+                              . " : ". $logtext . "\r\n"
+                    , FILE_APPEND );  
 }
 
 function isGranted(){  
@@ -179,6 +222,14 @@ if (!empty($method)){
     echo $UserObj["passwd"];
     echo "\r\n";
     
+  } else if ($method == 'adduser'){
+    $user =  $_REQUEST['user'];
+    $pwd =  $_REQUEST['passwd'];
+    $hash =  password_hash($pwd, PASSWORD_DEFAULT);
+    $email =  $_REQUEST['email'];
+    addUser($user,$hash,$email);
+    echo "fertig\r\n";
+    
   } else if ($method == 'picinfo'){ 
     $filename =  $_REQUEST['filename'];     
     logMe("picinfo for: " . filename);
@@ -213,3 +264,5 @@ if (!empty($method)){
     }    
   }
 } 
+
+?>
