@@ -200,5 +200,16 @@ if (!empty($method)){
     echo ": x=" . $x .", y=" . $y . ", height=" . $height . ", width=" . $width . ", faktor=" . $resize;
     echo "\r\n";
     
+  }else if ($method == 'testmail'){ 
+    $to =  $_REQUEST['to'];     
+    $subject =  $_REQUEST['subject']; 
+    $body = "Dies ist eine einfache Testmail.\r\nBitte ignorieren";
+    $headers = "From: Andreas Heidemann <ah@in-howi.de>";
+
+    if (mail ($to, $subject, $body, $headers)) {
+      echo "Mail verschickt an " . $to;
+    } else {
+      echo "Mail nicht verschickt an " . $to;
+    }    
   }
 } 
