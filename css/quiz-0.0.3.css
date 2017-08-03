@@ -126,12 +126,17 @@ img {
   padding right: 5px;
 }
 
-.qzc__titlearea .qzc__descarea {
+.qzc__descarea {
   margin: 10px;
   padding: 5px 5px 5px 5px important;
   padding-top: 10px;
   padding-left: 5px;
   padding right: 5px;
+}
+
+.qzc__titlearea {
+  margin:10px;
+  float: initial;
 }
 
 .qzc__desc {
