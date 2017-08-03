@@ -184,6 +184,13 @@ img {
     overflow: auto; /* Enable scroll if needed */
     background-color: rgb(0,0,0); /* Fallback color */
     background-color: rgba(0,0,0,0.9);
+}  
+
+img#qzi__editimage {
+  margin-top: 50px;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 30px;
 }
 
 div.qzc__image{ 
@@ -198,6 +205,12 @@ div.qzc__image{
 div.qzc__image.loading {
     background: url(quiz-loader.gif) no-repeat center center;
 }
+
+
+#loginarea{
+  padding: 20px;
+}
+
 
 @media print {
   .printheader {
