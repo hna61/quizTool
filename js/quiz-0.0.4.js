@@ -183,6 +183,10 @@
     qz.name = this.options.name;
     qz.email = this.options.email;
     qz.copyright  = this.options.copyright;
+    qz.fgcolor = this.options.fgcolor;
+    qz.bgcolor = this.options.bgcolor;
+    qz.logo = this.options.logo;
+    
     qz.questions  = this.options.questions.map(function (cur,ix,arr){
       var q = {};
       q.question = arr[ix].question;
@@ -231,6 +235,7 @@
   
   // start login
   Quiz.prototype.startup = function(){
+    this.setLogoAndColor();
     var editmode = hasURLParameter("edit");
     console.log("editmode = "+editmode);
     if (editmode){
@@ -238,6 +243,39 @@
     } else {
       this.play();
     }
+  }; 
+  
+  // start login
+  Quiz.prototype.setLogoAndColor = function(){
+    if (this.options.bgcolor && this.options.bgcolor.length>0) {
+      $('body').css('background-color', this.options.bgcolor);
+    } ;
+    if (this.options.fgcolor && this.options.fgcolor.length>0) {
+      $('body').css('color', this.options.fgcolor);
+    } ;
+    if (this.options.logo && this.options.logo.length>0) {
+      // logo
+      $("#logoarea").html("");
+      var img = new Image();
+      $(img).load(function(){
+        $(this).hide();
+        $("#logoarea")
+          .removeClass('loading')
+          .append(this);
+        $(this).fadeIn();
+      })
+      .error (function(){
+        console.log("kann Bild "+this.options.logo+" nicht laden");
+        showMsg("Fehler", "kann Bild nicht laden", 3000);
+      })
+      .attr("src", getImagePath(this.options.logo));
+      $("#logoarea").removeClass("invisible");
+      $("#logoarea").addClass("loading");
+    } else {
+      $("#logoarea").addClass("invisible"); 
+      $("#logoarea").html("");
+    }
+
   };
   
   /**
@@ -248,9 +286,14 @@
     document.title = "Edit: "+this.options.name; 
     this.respectUploadImageTypes();
     $("#edit_title").val(this.options.name);
-    $("#edit_email").val(this.options.email)
+    $("#edit_email").val(this.options.email);
+    $('#edit_fgcolor').val(this.options.fgcolor);
+    $('#edit_bgcolor').val(this.options.bgcolor);
+    $('#edit_logo').val(this.options.logo);
+      
     this.questionId = 0;
-  	this.displayQuestionEdit(); 
+  	this.displayQuestionEdit();
+     
     $("#noscriptarea").addClass("invisible");
     $("#gamearea").addClass("invisible");
     $("#editarea").removeClass("invisible"); 
@@ -317,6 +360,14 @@
       self.readEditedQuestion();
   		self.save();
   	});
+  	$('#qzi__showcolors').on('click', function(e){
+  		console.log("clicked view colors ...");
+  		self.setLogoAndColor();
+  	});
+  	$('#qzi__showlogo').on('click', function(e){
+  		console.log("clicked view image ...");
+  		self.editViewLogo();
+  	});
   	$('#qzi__showimg').on('click', function(e){
   		console.log("clicked view image ...");
   		self.editViewImg();
@@ -328,6 +379,10 @@
   	$('#qzi__upload').on('click', function(e){
   		console.log("clicked upload ...");
   		self.upload();
+  	});
+  	$('#qzi__uploadlogo').on('click', function(e){
+  		console.log("clicked uploadlogo ...");
+  		self.uploadLogo();
   	});
   	$('#qzi__neu').on('click', function(e){
   		console.log("clicked new ...");
@@ -422,6 +477,11 @@
 
   Quiz.prototype.editViewImg = function (){
     $("#qzi__editimage").attr("src", getImagePath($("#edit_image").val()));
+    $("#imgarea").show();
+  }
+
+  Quiz.prototype.editViewLogo = function (){
+    $("#qzi__editimage").attr("src", getImagePath($("#edit_logo").val()));
     $("#imgarea").show();
   }
 
@@ -526,6 +586,9 @@
 	
       this.options.name=edit_title.value;
       this.options.email=$("#edit_email").val();
+      this.options.fgcolor = $('#edit_fgcolor').val();
+      this.options.bgcolor = $('#edit_bgcolor').val();
+      this.options.logo = $('#edit_logo').val();
       q.question=edit_frage.value;
       q.answers[0]=edit_antwort1.value;
       q.answers[1]=edit_antwort2.value;
@@ -680,6 +743,7 @@
                             console.log("antwort von getimagetypes: "+ XMLHttpRequest.responseText) ;
                             if (XMLHttpRequest.responseText){
                               $('#edit_imageFile').attr("accept", XMLHttpRequest.responseText);
+                              $('#edit_logoFile').attr("accept", XMLHttpRequest.responseText);
                             } else {
                               console.log("Keine Einschränkung des Uploads möglich.");
                             }
@@ -716,6 +780,42 @@
                               var newName = XMLHttpRequest.responseText.substr(3);
                               console.log ("setze Bild auf img/"+newName);
                               $("#edit_image").val("img/"+newName);
+                              showMsg ("Info", "Bild erfolgreich gespeichert.", 3000);
+                            } else {
+                              showMsg ("FEHLER", "Fehler beim Bild hochladen: "+ XMLHttpRequest.responseText);
+                            }
+                            
+		}});
+  } 
+  
+/**
+ *  Upload von Bilddateien auf den Server.
+ */   
+ Quiz.prototype.uploadLogo = function (){ 
+    console.log("upload auf server, Dateiname: "+$("#edit_logoFile").val() );
+    
+    var filename = $("#edit_logoFile").val();
+    
+    var data = new FormData();
+    data.append('file', $("#edit_logoFile")[0].files[0]);  
+    data.append ('method', "uploadLogo"); 
+    data.append ('quiz', this.options.shortname);
+    data.append ('user', this.credentials.user);
+    data.append ('passwd', this.credentials.passwd);
+    
+    
+    $.ajax({type:"POST"
+            , data: data
+            , url: serverCall 
+            , processData: false
+            , contentType: false
+            , complete: function (XMLHttpRequest, textStatus) {
+                            console.log("antwort vom upload: "+ XMLHttpRequest.responseText) ;
+                            if (XMLHttpRequest.responseText && XMLHttpRequest.responseText.startsWith("OK ")){
+                              // setze Bild-Variable
+                              var newName = XMLHttpRequest.responseText.substr(3);
+                              console.log ("setze Bild auf img/"+newName);
+                              $("#edit_logo").val("img/"+newName);
                               showMsg ("Info", "Bild erfolgreich gespeichert.", 3000);
                             } else {
                               showMsg ("FEHLER", "Fehler beim Bild hochladen: "+ XMLHttpRequest.responseText);

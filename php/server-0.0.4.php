@@ -236,6 +236,85 @@ if (!empty($method)){
       echo "FEHLER beim Speichern von " . $newName;
     }
     
+  } else if ($method == 'uploadLogo'){
+    // upload and resize
+    $quiz = $_REQUEST['quiz'];
+    $tmpFile = $_FILES['file']['tmp_name'];
+    
+    $exif = exif_read_data($tmpFile);
+    if ($exif){
+      $orientation = $exif["Orientation"];
+      logMe("Orientation of " . $tmpFile . " is " . $orientation);
+    }
+    
+    list ($width,$height,$type) = getimagesize($tmpFile);
+    if ($width > ($height * 6)){
+      $x = floor(($width-($height * 6))/2);
+      $y = 0;
+      $width = $height * 6;
+    } else {
+      $x = 0;
+      $y = floor((($height) - floor($width / 6))/2);
+      $height = floor($width / 6);
+    }
+    $resize = 50 / $height;
+    
+    $srcimg = imagecreatefromjpeg($tmpFile);
+    $dstimg = imagecreatetruecolor (300, 50);
+    if ($srcimg && $dstimg && imagecopyresampled ($dstimg, $srcimg, 0, 0, $x, $y, 300, 50, $width, $height)){
+      switch($orientation){
+        case 1: // nothing
+        break;
+
+        case 2: // horizontal flip
+        //$resizeObj->flipImage($path,1);
+        logMe("cannot do horizontal flip on ". $tmpFile);
+        break;
+
+        case 3: // 180 rotate left
+        $dstimg = imagerotate($dstimg, 180, 0); 
+        logMe(" do 180 rotate left on ". $tmpFile);
+        break;
+
+        case 4: // vertical flip
+        //$resizeObj->flipImage($path,2);  
+        logMe("cannot do vertical flip on ". $tmpFile);
+        break;
+
+        case 5: // vertical flip + 90 rotate right
+        //$resizeObj->flipImage($path, 2);
+        //$resizeObj->rotateImage($path, -90);  
+        logMe("cannot do vertical flip + 90 rotate right on ". $tmpFile);
+        break;
+
+        case 6: // 90 rotate right
+        $dstimg = imagerotate($dstimg, -90, 0); 
+        logMe(" do 90 rotate right on ". $tmpFile);
+        break;
+
+        case 7: // horizontal flip + 90 rotate right
+        //$resizeObj->flipImage($path,1);    
+        //$resizeObj->rotateImage($path, -90); 
+        logMe("cannot do horizontal flip + 90 rotate right on ". $tmpFile);
+        break;
+
+        case 8:    // 90 rotate left
+        $dstimg = imagerotate($dstimg, 90, 0); 
+        logMe(" do 90 rotate left on ". $tmpFile);
+        break;
+      }
+      $newName = $quiz . '_logo.jpg';
+      if (imagejpeg($dstimg, $IMGDIR . $newName)){
+        echo "OK " .$newName;
+      } else {  
+        logMe ("FEHLER beim Speichern unter " .$IMGDIR .  $newName);
+        echo "FEHLER beim Speichern unter " .$IMGDIR . $newName;
+      }
+    }  else {
+      logMe ("FEHLER beim Speichern von " . $newName);
+      echo "FEHLER beim Speichern von " . $newName;
+    }
+    
   } else if ($method == 'getuser'){
     $user =  $_REQUEST['user'];
     $UserObj = getUser($user);

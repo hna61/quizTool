@@ -30,6 +30,8 @@
 	<noscript><div class='noindex'>Möglicherweise versuchen Sie, mit einem gesicherten Browser auf dem Server auf diese Website zuzugreifen. Aktivieren Sie Skripts, und laden Sie diese Seite dann erneut.</div></noscript>
 
 <div id="container" class="container">
+  <div id="logoarea" class="invisible loading"></div>
+  
   <div id="noscriptarea" >
     <h1>Kein Spiel</h1>
     <noscript><p>Ihr Browser beherrscht kein Javascript oder Sie haben es deaktiviert.</p>
@@ -93,17 +95,25 @@
     <div class='qzc__titlearea'>
       <h1 id='qzi_title'>Titel: <input id='edit_title'  size='50'/></h1>
       <p>E-Mail des Verantwortlichen: <input id='edit_email'  size='50'/></p>
+      <p>Hintergrundfarbe: <input id='edit_bgcolor'  size='50'/></p>
+      <p>Vordergrundfarbe: <input id='edit_fgcolor'  size='50'/></p>
+      <div id="qzi__showcolors" class="qzc__button" title="Farben anzeigen">Farben anzeigen</div>
+      <p>Logo-Url: <input id='edit_logo'  size='50'/><div id="qzi__showlogo" class="qzc__button" title="Bild anzeigen">anzeigen</div></p>
+    
+      <input type="file" id="edit_logoFile" />
+      <div id='qzi__uploadlogo' class='qzc__button' title='Bilddatei hochladen' >Upload</div>
     </div>  
+    <hr />
     <div class='qzc__scorearea'>
-    <div id='qzi__qcount' style='float: right;'>0</div><div style='float: right;'> Frage:&nbsp;</div>
+      <div id='qzi__qcount' style='float: right;'>0</div><div style='float: right;'> Frage:&nbsp;</div>
     </div>
     <div id='qzi__questionarea' class='qzc__questionarea'>
-    <div id='qzi__question' class='qzc__question'>Frage: <textarea id='edit_frage'  rows='2' cols='50'></textarea></div>
-    <div id='qzi__editimage' class='qzc__question'>Bilddatei: <input id='edit_image' size='50'/>
-      <div id="qzi__showimg" class="qzc__button" title="Bild anzeigen">anzeigen</div>
-    </div>
-    <input type="file" id="edit_imageFile" />
-    <div id='qzi__upload' class='qzc__button' title='Bilddatei hochladen' >Upload</div>
+      <div id='qzi__question' class='qzc__question'>Frage: <textarea id='edit_frage'  rows='2' cols='50'></textarea></div>
+      <div id='qzi__editimage' class='qzc__question'>Bilddatei: <input id='edit_image' size='50'/>
+        <div id="qzi__showimg" class="qzc__button" title="Bild anzeigen">anzeigen</div>
+      </div>
+      <input type="file" id="edit_imageFile" />
+      <div id='qzi__upload' class='qzc__button' title='Bilddatei hochladen' >Upload</div>
     </div>
     <div  id='qzi__answerarea' class='qzc__answerarea'>
     <div id='qzi__answer1' class='qzc__answer'>korrekte Antwort: <input id='edit_antwort1' size='50'/></div>
