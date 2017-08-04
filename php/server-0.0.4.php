@@ -14,6 +14,10 @@ $IMGDIR="../data/img/";
 
 logMe ($VERSION);
 
+function getAcceptedImageTypes(){
+  return "image/jpeg" ;
+}
+
 function getUser($user)
 {
 	$userFile = '../data/users.json';
@@ -281,6 +285,8 @@ if (!empty($method)){
     } else {
       echo "Mail nicht verschickt an " . $to;
     }    
+  } else if ($method == 'getimagetypes'){ 
+    echo getAcceptedImageTypes();
   }
 } 
 

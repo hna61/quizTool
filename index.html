@@ -5,7 +5,8 @@
   <meta name="robots" content="noindex, nofollow">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 
-  <!-- css -->
+  <!-- aussehen -->
+  <link id="qzi__favicon" rel="shortcut icon" type="image/png" href="data/img/quiz-icon.png">
   <link rel="stylesheet" href="css/quiz-0.0.4.css">
   
 
@@ -30,14 +31,15 @@
 
 <div id="container" class="container">
   <div id="noscriptarea" >
-  <h1>Kein Spiel</h1>
-  <noscript><p>Ihr Browser beherrscht kein Javascript oder Sie haben es deaktiviert.</p>
-  <p>Dieses Spiel basiert auf Javascript. Rufen sie die Seite bitte in einer Umgebung auf, in der JavaScript lauffähig ist.</p>
-  </noscript>
-  <p id='qzi__nogame' style='visible: none;'>Noch ist kein Spiel geladen. Das kann daran liegen, dass der Server, der die Fragen bereitstellt, 
-  überlastet ist oder dass es das gewünschte Quiz nicht gibt.
-  </p>
+    <h1>Kein Spiel</h1>
+    <noscript><p>Ihr Browser beherrscht kein Javascript oder Sie haben es deaktiviert.</p>
+    <p>Dieses Spiel basiert auf Javascript. Rufen sie die Seite bitte in einer Umgebung auf, in der JavaScript lauffähig ist.</p>
+    </noscript>
+    <p id='qzi__nogame' style='visible: none;'>Noch ist kein Spiel geladen. Das kann daran liegen, dass der Server, der die Fragen bereitstellt, 
+    überlastet ist oder dass es das gewünschte Quiz nicht gibt.
+    </p>
   </div>
+  
   <div id="gamearea" class="invisible">  
     <div class='qzc__titlearea'> 
     <h1 id='qzi_title'>QUIZ</h1>
@@ -75,10 +77,18 @@
       <div id='qzi__neufragesenden' class='qzc__button' title='einen Fragenvorschlag per E-Mail senden' >Neue Frage einsenden</div>
     </div>
   </div>
+  
   <div id="imgarea" class="modal">
     <img id="qzi__editimage" src="" title="Bild" alt="Bild"/>
     <div id="qzi__closeimg" class="qzc__button" >schliessen</div>
   </div>
+  
+  <div id="msgarea" class="modal">
+    <h1 id="qzi__msgtitle" class="titel"></h1>
+    <p id="qzi__msgtext"></p>
+    <div id="qzi__closemsg" class="qzc__button" >schliessen</div>
+  </div>
+  
   <div id="editarea" class="invisible">
     <div class='qzc__titlearea'>
       <h1 id='qzi_title'>Titel: <input id='edit_title'  size='50'/></h1>

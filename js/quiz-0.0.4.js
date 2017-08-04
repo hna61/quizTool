@@ -38,6 +38,11 @@
       return decodeURIComponent((new RegExp('[?|&]' + name + '=' + '([^&;]+?)(&|#|;|$)').exec(location.search) || [null, ''])[1].replace(/\+/g, '%20')) || null;
   }
   
+  
+  function hasURLParameter(name) {
+      return new RegExp('[?|&]' + name + '(=|&|#|;|$)').test(location.search);
+  }
+  
   /** Prüft, ob die Seite auf einem Mobilgerät dargestellt wird.
    *  Nur dann ist der WhatsApp-Button sinnvoll 
    */
@@ -60,6 +65,35 @@
   function getImagePath(path){
     return serverCall + "?method=getimage&image="+path;
   }
+  
+  
+  function showMsg(title, message, timeout, weiter){
+    $("#qzi__msgtitle").html(title);
+    $("#qzi__msgtext").html(message); 
+    
+    var timer1 = null;
+    if (timeout){
+      timer1 = window.setTimeout( function(){  
+        $("#msgarea").hide(); 
+        if (weiter){
+          weiter();   
+        }  
+      }, timeout );
+    } 
+    
+    $("#qzi__closemsg").on("click", function(){
+      if (timer1) {
+        window.clearTimeout(timer1);
+      }
+      $("#msgarea").hide(); 
+      if (weiter){
+        weiter();   
+      }    
+    });
+    
+    $("#msgarea").show();
+  }
+
 
   /**
    * Quiz constructor
@@ -119,13 +153,13 @@
                         if (data.questions){  
                           self.prepare(data);
                           onsuccess();
-                          alert ("Quiz geladen: "+ data.name);
+                          showMsg ("Info", "Quiz geladen: "+ data.name, 3000);
                         }  else {
-                          alert ("Kann Quiz "+data.name+" nicht laden.");
+                          showMsg ("Fehler", "Kann Quiz nicht laden: "+ data.name);
                         }
                       },
             error: function (textStatus, errorThrown) {
-                      alert ("FEHLER: "+ textStatus);
+                      showMsg ("FEHLER", textStatus);
                     }
             });
   };
@@ -165,54 +199,62 @@
    * Load Memory images from json config file
    */
   Quiz.prototype.play = function(baseurl){
-      for (var i=0; i<this.options.questions.length; i++){
-        this.options.questions[i].answers = shuffle(this.options.questions[i].answers);
-      }
-      
-      this.newGame();
-      this.options.questions = shuffle(this.options.questions);
-      this.displayQuestion();
-      
-      $("#noscriptarea").addClass("invisible");
-      $("#gamearea").removeClass("invisible");
-      $("#editarea").addClass("invisible");
-      $("#loginarea").addClass("invisible");
+    // set page title
+    document.title = this.options.name; 
+    
+    // shuffle answers    
+    for (var i=0; i<this.options.questions.length; i++){
+      this.options.questions[i].answers = shuffle(this.options.questions[i].answers);
+    }
+           
+    this.newGame();
+    this.options.questions = shuffle(this.options.questions);
+    this.displayQuestion();
+    
+    $("#noscriptarea").addClass("invisible");
+    $("#gamearea").removeClass("invisible");
+    $("#editarea").addClass("invisible");
+    $("#loginarea").addClass("invisible");
     
   };    
   
   // start login
   Quiz.prototype.login = function(){
-      
-      $("#noscriptarea").addClass("invisible");
-      $("#gamearea").addClass("invisible");
-      $("#editarea").addClass("invisible");
-      $("#loginarea").removeClass("invisible");
+    // set page title
+    document.title = "Login: " + this.options.name; 
+    $("#noscriptarea").addClass("invisible");
+    $("#gamearea").addClass("invisible");
+    $("#editarea").addClass("invisible");
+    $("#loginarea").removeClass("invisible");
     
   }; 
   
   // start login
   Quiz.prototype.startup = function(){
-      var editmode = getURLParameter("edit");
-      console.log("editmode = "+editmode);
-      if (editmode){
-        this.login();
-      } else {
-        this.play();
-      }
+    var editmode = hasURLParameter("edit");
+    console.log("editmode = "+editmode);
+    if (editmode){
+      this.login();
+    } else {
+      this.play();
+    }
   };
   
   /**
    * Load Memory images from json config file
    */
-  Quiz.prototype.edit = function(baseurl){
-      $("#edit_title").val(this.options.name);
-      $("#edit_email").val(this.options.email)
-	    this.questionId = 0;
-    	this.displayQuestionEdit(); 
-      $("#noscriptarea").addClass("invisible");
-      $("#gamearea").addClass("invisible");
-      $("#editarea").removeClass("invisible"); 
-      $("#loginarea").addClass("invisible");
+  Quiz.prototype.edit = function(baseurl){  
+    // set page title
+    document.title = "Edit: "+this.options.name; 
+    this.respectUploadImageTypes();
+    $("#edit_title").val(this.options.name);
+    $("#edit_email").val(this.options.email)
+    this.questionId = 0;
+  	this.displayQuestionEdit(); 
+    $("#noscriptarea").addClass("invisible");
+    $("#gamearea").addClass("invisible");
+    $("#editarea").removeClass("invisible"); 
+    $("#loginarea").addClass("invisible");
   };
   
   // initialize & display game constants 
@@ -425,7 +467,7 @@
         })
         .error (function(){
           console.log("kann Bild "+q.img+" nicht laden");
-          alert("kann Bild nicht laden");
+          showMsg("Fehler", "kann Bild nicht laden", 3000);
         })
         .attr("src", getImagePath(q.img));
         $(".qzc__image").removeClass("invisible");
@@ -584,7 +626,7 @@
             }   
             this.displayQuestionEdit();
       } else {
-        alert ("Die letzte Frage darf nicht gelöscht werden!")
+        showMsg ("FEHLER", "Die letzte Frage darf nicht gelöscht werden!");
       }
   };
   
@@ -601,9 +643,9 @@
             , complete: function (XMLHttpRequest, textStatus) {
                             console.log("Antwort vom write: "+ XMLHttpRequest.responseText) ;
                             if (XMLHttpRequest.responseText.startsWith("OK")){
-                              alert ("Speichern erfolgreich");
+                              showMsg ("Info", "Speichern erfolgreich", 3000);
                             } else {                                          
-                              alert ("Speichern fehlgeschlagen: "+XMLHttpRequest.responseText);
+                              showMsg ("FEHLER", "Speichern fehlgeschlagen: "+XMLHttpRequest.responseText);
                             }
 		}});
   }
@@ -623,11 +665,27 @@
                               success();
                             } else {
                               console.log("Zugriff verweigert fuer: "+ user);
-                              alert("Zugriff verweigert für Benutzer: "+ user); 
+                              showMsg("KEIN ZUGANG", "Zugriff verweigert für Benutzer: "+ user); 
                             }
                             
 		}});
   }
+  
+  //getimagetypes
+  Quiz.prototype.respectUploadImageTypes = function (){
+    $.ajax({type:"post"
+            , data: {method: 'getimagetypes'}
+            , url: serverCall 
+            , complete: function (XMLHttpRequest, textStatus) {
+                            console.log("antwort von getimagetypes: "+ XMLHttpRequest.responseText) ;
+                            if (XMLHttpRequest.responseText){
+                              $('#edit_imageFile').attr("accept", XMLHttpRequest.responseText);
+                            } else {
+                              console.log("Keine Einschränkung des Uploads möglich.");
+                            }
+                            
+		}});
+  }  
   
 /**
  *  Upload von Bilddateien auf den Server.
@@ -658,9 +716,9 @@
                               var newName = XMLHttpRequest.responseText.substr(3);
                               console.log ("setze Bild auf img/"+newName);
                               $("#edit_image").val("img/"+newName);
-                              alert ("Bild erfolgreich gespeichert.");
+                              showMsg ("Info", "Bild erfolgreich gespeichert.", 3000);
                             } else {
-                              alert ("Fehler beim Bild hochladen: "+ XMLHttpRequest.responseText);
+                              showMsg ("FEHLER", "Fehler beim Bild hochladen: "+ XMLHttpRequest.responseText);
                             }
                             
 		}});
