@@ -97,14 +97,10 @@ if (!empty($method)){
     $user =  $_REQUEST['user'];
     if (isGranted()){
       logMe($user . ": erfolgreich angemeldet.");
-      echo "access for ";
-      echo $user; 
-      echo " granted.";
+      echo "access for " . $user . " granted.";
     } else {    
       logMe($user . ": erfolgloser Anmeldeversuch.") ;
-        echo "access for ";
-        echo  $user;
-        echo " rejected!";
+      echo "access for ". $user . " rejected!";
     }
     
   } else if ($method == 'gethash'){
@@ -112,9 +108,7 @@ if (!empty($method)){
     $pwd  =  $_REQUEST['passwd']; 
     $hash =  password_hash($pwd, PASSWORD_DEFAULT);
     logMe($user . ", " . $hash) ;
-    echo "passwordhash for ";
-    echo  $user;
-    echo " generated and ";
+    echo "passwordhash for ". $user." generated and ";
     if (password_verify($pwd, $hash)){
       echo "verified";
     } else {
