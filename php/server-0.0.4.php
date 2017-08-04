@@ -8,7 +8,7 @@
  
 ini_set('display_errors', 1);
 
-$VERSION="0.0.3";
+$VERSION="0.0.4";
 $QUIZDIR="../data/quizes/";
 $IMGDIR="../data/img/";
 

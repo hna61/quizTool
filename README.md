@@ -5,7 +5,7 @@ Availabe in german only.
 Zum Start ist dieses Tool vorläufig nur in deutsch verfügbar.
 
 ## Version
-0.0.3 
+0.0.4 - SNAPSHOT 
 
 ## Installation
 
@@ -37,6 +37,9 @@ und ob der Bearbeitungs-Modus benutzt werden soll.
 * Bearbeiten:  http://domain.tld/pfadZumSpiel/?quiz=quizname&edit=yes 
 
 ## Changelog
+
+### 0.0.4
+* ...
 
 ### 0.0.3
 * Verwaltung im github
