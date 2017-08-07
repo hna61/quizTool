@@ -5,7 +5,7 @@ Availabe in german only.
 Zum Start ist dieses Tool vorläufig nur in deutsch verfügbar.
 
 ## Version
-0.0.4 - SNAPSHOT 
+0.0.4 
 
 ## Installation
 
@@ -39,7 +39,14 @@ und ob der Bearbeitungs-Modus benutzt werden soll.
 ## Changelog
 
 ### 0.0.4
-* ...
+* JS-Datei einbinden reicht in html-Datei zur Integration des Spiels
+* Farben (Vorder- und Hintergrund) sind konfigurierbar pro Quiz
+* Das Logo ist optional konfigurierbar
+* Der URL-Parameter 'edit' muss nicht mehr mit einem Wert gefüllt werden
+* Meldungen nutzen den Anzeigebereich im Fenster (Modal)
+* Das Spiel hat ein allgemeines FavIcon
+* Der Bild-Upload lässt nur zugelassene Dateitypen zur Auswahl zu.
+* Der Seiten-Titel wird aus dem Quiz-Namen dynamisch bestimmt
 
 ### 0.0.3
 * Verwaltung im github

@@ -881,3 +881,9 @@
     mailUrl += "%0D%0A%0D%0AHier%20geht%20es%20zum%20Rätsel:%20"+this.removeEdit(window.location.href)+"%0D%0A";
     window.location.href=mailUrl;
   }
+
+
+  window.onload = function (){
+      var myQuiz = new Quiz({ });
+      myQuiz.load("test", function(){myQuiz.startup();});
+    };
