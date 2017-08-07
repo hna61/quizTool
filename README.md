@@ -5,7 +5,7 @@ Availabe in german only.
 Zum Start ist dieses Tool vorläufig nur in deutsch verfügbar.
 
 ## Version
-0.0.4 
+0.0.5 - SNAPSHOT 
 
 ## Installation
 

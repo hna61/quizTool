@@ -92,13 +92,17 @@
       <p>Vordergrundfarbe: <input id='edit_fgcolor'  size='50'/></p>
       <div id="qzi__showcolors" class="qzc__button" title="Farben anzeigen">Farben anzeigen</div>
       <p>Logo-Url: <input id='edit_logo'  size='50'/><div id="qzi__showlogo" class="qzc__button" title="Bild anzeigen">anzeigen</div></p>
-    
       <input type="file" id="edit_logoFile" />
       <div id='qzi__uploadlogo' class='qzc__button' title='Bilddatei hochladen' >Upload</div>
     </div>  
     <hr />
     <div class='qzc__scorearea'>
       <div id='qzi__qcount' style='float: right;'>0</div><div style='float: right;'> Frage:&nbsp;</div>
+    </div>  
+    <div class='qzc__buttonarea'>
+    <div id='qzi__back' class='qzc__button' title='die vorhergehende Frage anzeigen und bearbeiten'>vorige Frage</div>
+    <div id='qzi__next' class='qzc__button' title='die nächste Frage anzeigen und bearbeiten' >n&auml;chste Frage</div>
+    <div id='qzi__neu' class='qzc__button' title='eine neue Frage anlegen und bearbeiten' >neue Frage</div>
     </div>
     <div id='qzi__questionarea' class='qzc__questionarea'>
       <div id='qzi__question' class='qzc__question'>Frage: <textarea id='edit_frage'  rows='2' cols='50'></textarea></div>
@@ -127,6 +131,7 @@
     <div id='qzi__play' class='qzc__button' title='das Quiz spielen (ist der Stand schon gespeichert?)' >Spielen</div>
     </div>
   </div>
+  
   <div id="loginarea" class="invisible">
   <h1 class='titel'>Login</h1>
   <p>
@@ -145,6 +150,7 @@
     <div id='qzi__play2' class='qzc__button' title='das Quiz spielen (ist der Stand schon gespeichert?)' >nur Spielen (ohne Anmeldung)</div>
     </div>
   </div>
+  
 </div>
 </body>
 </html>
