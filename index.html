@@ -25,7 +25,7 @@
 <div id="container" class="container">
   <div id="logoarea" class="invisible loading"></div>
   
-  <div id="noscriptarea" >
+  <div id="noscriptarea"  class="area">
     <h1>Kein Spiel</h1>
     <noscript><p>Ihr Browser beherrscht kein Javascript oder Sie haben es deaktiviert.</p>
     <p>Dieses Spiel basiert auf Javascript. Rufen sie die Seite bitte in einer Umgebung auf, in der JavaScript lauffähig ist.</p>
@@ -35,7 +35,7 @@
     </p>
   </div>
   
-  <div id="gamearea" class="invisible">  
+  <div id="gamearea" class="invisible area">  
     <div class='qzc__titlearea'> 
     <h1 id='qzi_title'>QUIZ</h1>
     </div>
@@ -84,7 +84,7 @@
     <div id="qzi__closemsg" class="qzc__button" >schliessen</div>
   </div>
   
-  <div id="editarea" class="invisible">
+  <div id="editarea" class="invisible area">
     <div class='qzc__titlearea'>
       <h1 id='qzi_title'>Titel: <input id='edit_title'  size='50'/></h1>
       <p>E-Mail des Verantwortlichen: <input id='edit_email'  size='50'/></p>
@@ -132,7 +132,7 @@
     </div>
   </div>
   
-  <div id="loginarea" class="invisible">
+  <div id="loginarea" class="invisible area">
   <h1 class='titel'>Login</h1>
   <p>
   Zum Bearbeiten der Quiz-Fragen müssen Sie sich mit Benutzernamen und Kennwort anmelden.
@@ -143,11 +143,31 @@
       <table>
       <tr><th class='param'>Name: </th><td><input id='edit_name'  size='30'/></td></tr>
       <tr><th class='param'>Passwort: </th><td><input type='password' id='edit_pwd'  size='30'/></td></tr>
+      <tr id="qzi__pin" class="invisible"><th class='param'>PIN: </th><td><input type='password' id='edit_pin'  size='30'/></td></tr>
       </table>
     </div>
     <div class='qzc__buttonarea'>
     <div id='qzi__login' class='qzc__button' title='anmelden'>Anmelden zum Bearbeiten</div>
+    <div id='qzi__showregister' class='qzc__button' title='Registrieren'>Registrieren</div>
     <div id='qzi__play2' class='qzc__button' title='das Quiz spielen (ist der Stand schon gespeichert?)' >nur Spielen (ohne Anmeldung)</div>
+    </div>
+  </div>
+  
+  <div id="registerarea" class="invisible area">
+  <h1 class='titel'>Registrierung / Verifikation</h1>
+  <p>
+  Hier können Sie sich selber registrieren.
+    </p>
+    <div class='qzc__loginarea'>
+      <table>
+      <tr><th class='param'>Name: </th><td><input id='reg_name'  size='30'/></td></tr>
+      <tr><th class='param'>E-Mail: </th><td><input id='reg_email'  size='30'/></td></tr>
+      <tr><th class='param'>Passwort: </th><td><input type='password' id='reg_pwd'  size='30'/></td></tr>
+      <tr><th class='param'>Wiederholung: </th><td><input type='password' id='reg_pwd2'  size='30'/></td></tr>
+      </table>
+    </div>
+    <div class='qzc__buttonarea'>
+    <div id='qzi__register' class='qzc__button' title='Registrieren'>Registrieren</div>
     </div>
   </div>
   

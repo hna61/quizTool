@@ -101,7 +101,7 @@
    */
 
   function Quiz( options ) {
-    console.log ("Quiz Version 0.0.4");
+    console.log ("Quiz V "+ serverCall);
     $("#qzi__nogame").show();
     this.options = extend( {}, this.options );
     extend( this.options, options );
@@ -215,10 +215,8 @@
     this.options.questions = shuffle(this.options.questions);
     this.displayQuestion();
     
-    $("#noscriptarea").addClass("invisible");
+    $(".area").addClass("invisible");
     $("#gamearea").removeClass("invisible");
-    $("#editarea").addClass("invisible");
-    $("#loginarea").addClass("invisible");
     
   };    
   
@@ -226,9 +224,7 @@
   Quiz.prototype.login = function(){
     // set page title
     document.title = "Login: " + this.options.name; 
-    $("#noscriptarea").addClass("invisible");
-    $("#gamearea").addClass("invisible");
-    $("#editarea").addClass("invisible");
+    $(".area").addClass("invisible");
     $("#loginarea").removeClass("invisible");
     
   }; 
@@ -237,8 +233,13 @@
   Quiz.prototype.startup = function(){
     this.setLogoAndColor();
     var editmode = hasURLParameter("edit");
+    var pin = getURLParameter("pin");
     console.log("editmode = "+editmode);
     if (editmode){
+      if (pin){
+        $("#qzi__pin").removeClass("invisible");
+        $("#edit_pin").val(pin);
+      }
       this.login();
     } else {
       this.play();
@@ -279,6 +280,28 @@
   };
   
   /**
+   * Load Verify-Screen
+   */
+  Quiz.prototype.verify = function(baseurl){  
+    // set page title
+    document.title = "Verifiziere Quiz-Bearbeiter";
+     
+    $(".area").addClass("invisible");
+    $("#loginarea").removeClass("invisible");
+  };
+  
+  /**
+   * Load Register-Screen
+   */
+  Quiz.prototype.register = function(baseurl){  
+    // set page title
+    document.title = "Registriere Quiz-Bearbeiter";
+     
+    $(".area").addClass("invisible");
+    $("#registerarea").removeClass("invisible");
+  };
+  
+  /**
    * Load Memory images from json config file
    */
   Quiz.prototype.edit = function(baseurl){  
@@ -294,10 +317,8 @@
     this.questionId = 0;
   	this.displayQuestionEdit();
      
-    $("#noscriptarea").addClass("invisible");
-    $("#gamearea").addClass("invisible");
+    $(".area").addClass("invisible");
     $("#editarea").removeClass("invisible"); 
-    $("#loginarea").addClass("invisible");
   };
   
   // initialize & display game constants 
@@ -418,19 +439,37 @@
   	  });
   	}
     
+    // register - screen
+  	$('#qzi__register').on('click', function(e){
+  		console.log("clicked register ...");
+      if ($('#reg_pwd').val() == $('#reg_pwd2').val()){
+        self.serverRegister($('#reg_name').val(),$('#reg_pwd').val(),$('#reg_email').val(),function(){
+            self.verify()
+          });
+      }
+      
+  	});
+    
     // login - screen
   	$('#qzi__login').on('click', function(e){
   		console.log("clicked login ...");
-      self.serverLogin($('#edit_name').val(),$('#edit_pwd').val(),function(){
-      	 $('#qzi__edit').removeClass("invisible");
-          self.edit()
-        });
+      self.serverLogin($('#edit_name').val(),
+                        $('#edit_pwd').val(),
+                        $('#edit_pin').val(),
+                        function(){
+                          self.edit()
+                        });
+      $("#qzi__pin").addClass("invisible");                        
   	});
   	$('#edit_pwd').on('keypress', function(e){
       if (e.which == 13){
     		console.log("finished password ...");
         self.serverLogin($('#edit_name').val(),$('#edit_pwd').val(),function(){self.edit()});
       }
+  	});
+  	$('#qzi__showregister').on('click', function(e){
+  		console.log("clicked showregister ...");
+  		self.register();
   	});
   	$('#qzi__play2').on('click', function(e){
   		console.log("clicked play2 ...");
@@ -713,6 +752,27 @@
 		}});
   }
   
+ // Register  
+ Quiz.prototype.serverRegister = function (user, passwd, email, success){ 
+    console.log("register anfrage auf server");
+    var self = this;
+    
+    $.ajax({type:"post"
+            , data: {method: 'adduser', user: user, passwd: passwd, email: email}
+            , url: serverCall 
+            , complete: function (XMLHttpRequest, textStatus) {
+                            console.log("antwort vom register: "+ XMLHttpRequest.responseText) ;
+                            if (XMLHttpRequest.responseText.startsWith("OK")){
+                              self.credentials = {user: user, passwd: passwd};
+                              success();
+                            } else {
+                              console.log("Registrierung verweigert fuer: "+ user);
+                              showMsg("KEINE Registrierung", "Die Registrierung für Benutzer: "+ user +" wurde verweigert."); 
+                            }
+                            
+		}});
+  }
+  
  // Login  
  Quiz.prototype.serverLogin = function (user, passwd, success){ 
     console.log("login anfrage auf server");
@@ -726,7 +786,12 @@
                             if (XMLHttpRequest.responseText.endsWith("granted.")){
                               self.credentials = {user: user, passwd: passwd};
                               success();
-                            } else {
+                            } else if (XMLHttpRequest.responseText.startsWith("PIN")){
+                              console.log("PIN verlangt fuer: "+ user);
+                              showMsg("PIN VERIFIKATION", "Bitte PIN eingeben für Benutzer: "+ user, 2000); 
+                              $("#qzi__pin").removeClass("invisible");
+                              $("#edit_pin").val("");
+                            }else {
                               console.log("Zugriff verweigert fuer: "+ user);
                               showMsg("KEIN ZUGANG", "Zugriff verweigert für Benutzer: "+ user); 
                             }

@@ -8,11 +8,20 @@
  
 ini_set('display_errors', 1);
 
-$VERSION="0.0.4";
+$VERSION="0.0.5";
 $QUIZDIR="../data/quizes/";
 $IMGDIR="../data/img/";
 
-logMe ($VERSION);
+logMe ($VERSION); 
+	
+
+function logMe($logtext){
+  $logfile = "../data/usage.log";
+  file_put_contents($logfile, date("Y-m-d H:i:s") 
+                              .", ". $_SERVER['REMOTE_ADDR']
+                              . " : ". $logtext . "\r\n"
+                    , FILE_APPEND );  
+}
 
 function getAcceptedImageTypes(){
   return "image/jpeg" ;
@@ -40,12 +49,46 @@ function addUser($username, $passwd, $email){
 	setUser($username,$newUser);
 }
 
-function registerUser($username, $passwd, $email){
-	$pin = "4711"; /* TODO: richtiger Zufallswert */
-	$newUser = (object) ['passwd' => $passwd, 'email'=> $email];
-	setUser($username,$newUser);
-	mailPin($newUser['email'], $newUser['pin']);
+function verifyUser($username, $pwd, $pin){
+	$newUser = getUser($username);
+  if (("x".$newUser['pin']) == ("x".$pin)){
+    logMe("PIN für ". $username . " akzeptiert.");
+    $newUser['pin'] = 0;  
+	  setUser($username,$newUser);
+    return true;
+  }
+  logMe("PIN für ". $username . " nicht akzeptiert. ".$pin. " <> ". $newUser['pin']);
+	return false;
 }
+
+function registerUser($username, $hash, $email){ 
+	$oldUser = getUser($username);
+  if ($oldUser){
+    logMe("Benutzer ".$username." darf nicht überschrieben werden.");
+  } else {
+  	$pin = rand(1000, 9999);
+  	$newUser = (object) ['passwd' => $hash, 'email'=> $email, 'pin'=>$pin];
+  	setUser($username,$newUser);
+  	return mailPin($email, $pin);
+  }
+}
+
+function isGranted(){  
+  $user =  $_REQUEST['user'];
+  $pwd =   $_REQUEST['passwd']; 
+  $UserObj = getUser($user);
+  return ($UserObj && password_verify($pwd,$UserObj["passwd"]));
+}
+
+function isVerified(){  
+  $user =  $_REQUEST['user'];
+  $pwd =   $_REQUEST['passwd']; 
+  $UserObj = getUser($user);
+  return ($UserObj 
+          && password_verify($pwd,$UserObj["passwd"]) 
+          && (!$UserObj["pin"] || $UserObj["pin"]==0));
+}
+
 
 function mailPin($email, $pin){
 	$subject = "Zugang zum Quiz-Server";
@@ -55,10 +98,13 @@ function mailPin($email, $pin){
 		. "Die PIN ist    "
 		. $pin . ".\r\n\r\n"
 		. "Bitte nutze den folgenden Link dazu:\r\n"
-		. "* http://p.in-howi.de/kobel/quiztest/index.php?pin="
+		. "* http://tests.in-howi.de/quiztest/index.html?pin="
 		. $pin
-		. "\r\n\r\n-Dein Server-";
-	mailOut($email, $subject, $body);
+		. "&edit\r\n\r\n-Dein Server-";
+  
+  $headers = "From: Quiz-Server <quiz-server@in-howi.de>";
+
+  return mail($email, $subject, $body, $headers);
 }
 
 function sendImg($image){
@@ -74,58 +120,77 @@ function sendImg($image){
     echo ("Datei ". $filePath ." nicht vorhanden.");
   }   
 }
-	
-
-function logMe($logtext){
-  $logfile = "../data/usage.log";
-  file_put_contents($logfile, date("Y-m-d H:i:s") 
-                              .", ". $_SERVER['REMOTE_ADDR']
-                              . " : ". $logtext . "\r\n"
-                    , FILE_APPEND );  
-}
-
-function isGranted(){  
-  $user =  $_REQUEST['user'];
-  $pwd =   $_REQUEST['passwd']; 
-  $UserObj = getUser($user);
-  return ($UserObj && password_verify($pwd,$UserObj["passwd"]));
-}
 
 $dataToStore = $_REQUEST['store_me'];
 $fileToStore = $_REQUEST['filename'];
 $method      = $_REQUEST['method'];
 $grant       = $_REQUEST['grant'];
 
-if (!empty($method)){
-  if ($method == 'login'){
+function do_login(){
     $user =  $_REQUEST['user'];
-    if (isGranted()){
+    if (isVerified()){
       logMe($user . ": erfolgreich angemeldet.");
       echo "access for " . $user . " granted.";
-    } else {    
+    } else if (isGranted ()){    
+      logMe($user . ": PIN-Verifikation fehlt.") ;
+      echo "PIN for ". $user . " requested!";
+    }   else {    
       logMe($user . ": erfolgloser Anmeldeversuch.") ;
       echo "access for ". $user . " rejected!";
-    }
+    }    
+}
+$server['login'] = do_login;    
     
-  } else if ($method == 'gethash'){
+function do_getuser(){
     $user =  $_REQUEST['user'];
-    $pwd  =  $_REQUEST['passwd']; 
+    $UserObj = getUser($user);
+    echo "requested ";
+    echo $user;
+    echo ", pwd: ";
+    echo $UserObj["passwd"];
+    echo "\r\n";
+    
+}
+$server['getuser'] = do_getuser;
+
+function do_adduser(){
+    $user =  $_REQUEST['user'];
+    $pwd =  $_REQUEST['passwd'];
     $hash =  password_hash($pwd, PASSWORD_DEFAULT);
-    logMe($user . ", " . $hash) ;
-    echo "passwordhash for ". $user." generated and ";
-    if (password_verify($pwd, $hash)){
-      echo "verified";
-    } else {
-      echo "failed";
+    $email =  $_REQUEST['email'];
+    logMe("registriere ". $user .", ". $email);
+    if (registerUser($user,$hash,$email)){
+      logMe ("registriere ". $user. ", ". $email);
+      echo "OK: PIN-Mail geschickt an ". $email;
+    } else {                                      
+      logMe ("FEHLER bei: registriere ". $user. ", ". $email);
+      echo "FEHLER: Registrierung fehlgeschlagen für ". $user;
     }
+}
+$server['adduser'] = do_adduser;
+
+function do_verifyuser(){
+    $user =  $_REQUEST['user'];
+    $pwd =  $_REQUEST['passwd'];
+    $pin =  $_REQUEST['pin'];
+    $email =  $_REQUEST['email'];
+    logMe("verifiziere ". $user .", ". $email);
+    if (verifyUser($user,$pwd,$pin)){
+      logMe ("PIN-Verifikation für ". $user. ", ". $email);
+      echo "OK: PIN-Verfikation für ". $email;
+    } else {                                      
+      logMe ("FEHLER bei: PIN-Verfikation für ". $user. ", ". $email);
+      echo "FEHLER: keine PIN-Verfikation für ". $email;
+    }
+}
+$server['verifyuser'] = do_verifyuser;
     
-    
-  } else if ($method == 'storequiz'){
+function do_storequiz(){
     if(!empty($dataToStore) )
     {
       $fileToStore = $QUIZDIR. $_REQUEST['quiz'] . ".json";
       // write file
-      if (isGranted()){
+      if (isVerified()){
         logMe ("Spiel ".$fileToStore." gespeichert.");
         file_put_contents($fileToStore, json_encode (json_decode ($dataToStore),JSON_PRETTY_PRINT));
       	echo "OK, quiz saved to ";
@@ -136,9 +201,11 @@ if (!empty($method)){
       }
     } else {
       echo "FEHLER: keine Daten zum Speichern";
-    }  
-    
-  } else if ($method == 'getquiz'){
+    }     
+}
+$server['storequiz'] = do_storequiz;
+   
+function do_getquiz(){
     $fileToStore = $QUIZDIR . $_REQUEST['quiz'] . ".json";
     $content = file_get_contents ($fileToStore);
     if ($content){   
@@ -147,14 +214,19 @@ if (!empty($method)){
     } else {
       logMe ("Spiel ".$fileToStore." unbekannt.");
       echo '{"name":"neues Quiz", "email":"ah@in-howi.de", "questions": [{"question": "", "img": "", "desc":"", "url":"", "answers": ["","","",""]}]}';
-    }
-    
-  } else if ($method == 'getimage'){
+    }    
+}
+$server['getquiz'] = do_getquiz;
+
+
+function do_getimage(){
     $imageFile =  $_REQUEST['image'];
     logMe ("Lade Bild: ". $imageFile);
     sendImg($imageFile);
-    
-  } else if ($method == 'uploadImage'){
+}
+$server['getimage'] = do_getimage;
+
+function do_uploadImage(){
     // upload and resize
     $quiz = $_REQUEST['quiz'];
     $tmpFile = $_FILES['file']['tmp_name'];
@@ -235,8 +307,10 @@ if (!empty($method)){
       logMe ("FEHLER beim Speichern von " . $newName);
       echo "FEHLER beim Speichern von " . $newName;
     }
+}
+$server['uploadImage'] = do_uploadImage;
     
-  } else if ($method == 'uploadLogo'){
+function do_uploadLogo(){
     // upload and resize
     $quiz = $_REQUEST['quiz'];
     $tmpFile = $_FILES['file']['tmp_name'];
@@ -314,59 +388,19 @@ if (!empty($method)){
       logMe ("FEHLER beim Speichern von " . $newName);
       echo "FEHLER beim Speichern von " . $newName;
     }
-    
-  } else if ($method == 'getuser'){
-    $user =  $_REQUEST['user'];
-    $UserObj = getUser($user);
-    echo "requested ";
-    echo $user;
-    echo ", pwd: ";
-    echo $UserObj["passwd"];
-    echo "\r\n";
-    
-  } else if ($method == 'adduser'){
-    $user =  $_REQUEST['user'];
-    $pwd =  $_REQUEST['passwd'];
-    $hash =  password_hash($pwd, PASSWORD_DEFAULT);
-    $email =  $_REQUEST['email'];
-    addUser($user,$hash,$email);
-    echo "fertig\r\n";
-    
-  } else if ($method == 'picinfo'){ 
-    $filename =  $_REQUEST['filename'];     
-    logMe("picinfo for: " . filename);
-    list ($width,$height,$type) = getimagesize("../img/".$filename);
-    if ($width > $height){
-      $x = floor(($width-$height)/2);
-      $y = 0;
-      $width = $height;
-    } else {
-      $x = 0;
-      $y = floor(($height - $width)/2);
-      $height = $width;
-    }
-    $resize = 300 / $height;
-    
-    
-    echo "Änderung für ";
-    echo $filename;
-    echo ": x=" . $x .", y=" . $y . ", height=" . $height . ", width=" . $width . ", faktor=" . $resize;
-    echo "\r\n";
-    
-  }else if ($method == 'testmail'){ 
-    $to =  $_REQUEST['to'];     
-    $subject =  $_REQUEST['subject']; 
-    $body = "Dies ist eine einfache Testmail.\r\nBitte ignorieren";
-    $headers = "From: Andreas Heidemann <ah@in-howi.de>";
-
-    if (mail ($to, $subject, $body, $headers)) {
-      echo "Mail verschickt an " . $to;
-    } else {
-      echo "Mail nicht verschickt an " . $to;
-    }    
-  } else if ($method == 'getimagetypes'){ 
+}
+$server['uploadLogo'] = do_uploadLogo;
+       
+function do_getimagetypes(){ 
     echo getAcceptedImageTypes();
-  }
-} 
+}       
+$server['getimagetypes'] = do_getimagetypes;
+
+
+if ($method && $server[$method]){
+     $server[$method](); 
+}  else {
+  "FEHLER: falscher Aufruf des Servers";
+}
 
 ?>
