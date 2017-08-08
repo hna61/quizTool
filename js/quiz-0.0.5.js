@@ -186,6 +186,7 @@
     qz.fgcolor = this.options.fgcolor;
     qz.bgcolor = this.options.bgcolor;
     qz.logo = this.options.logo;
+    qz.users = this.options.users ? this.options.users : [this.credentials.user];
     
     qz.questions  = this.options.questions.map(function (cur,ix,arr){
       var q = {};
