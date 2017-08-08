@@ -464,7 +464,8 @@
   	$('#edit_pwd').on('keypress', function(e){
       if (e.which == 13){
     		console.log("finished password ...");
-        self.serverLogin($('#edit_name').val(),$('#edit_pwd').val(),function(){self.edit()});
+        self.serverLogin($('#edit_name').val(),$('#edit_pwd').val(),
+                        $('#edit_pin').val(),function(){self.edit()});
       }
   	});
   	$('#qzi__showregister').on('click', function(e){
@@ -774,29 +775,49 @@
   }
   
  // Login  
- Quiz.prototype.serverLogin = function (user, passwd, success){ 
+ Quiz.prototype.serverLogin = function (user, passwd, pin, success){ 
     console.log("login anfrage auf server");
     var self = this;
     
-    $.ajax({type:"post"
-            , data: {method: 'login', user: user, passwd: passwd}
-            , url: serverCall 
-            , complete: function (XMLHttpRequest, textStatus) {
-                            console.log("antwort vom login: "+ XMLHttpRequest.responseText) ;
-                            if (XMLHttpRequest.responseText.endsWith("granted.")){
-                              self.credentials = {user: user, passwd: passwd};
-                              success();
-                            } else if (XMLHttpRequest.responseText.startsWith("PIN")){
-                              console.log("PIN verlangt fuer: "+ user);
-                              showMsg("PIN VERIFIKATION", "Bitte PIN eingeben für Benutzer: "+ user, 2000); 
-                              $("#qzi__pin").removeClass("invisible");
-                              $("#edit_pin").val("");
-                            }else {
-                              console.log("Zugriff verweigert fuer: "+ user);
-                              showMsg("KEIN ZUGANG", "Zugriff verweigert für Benutzer: "+ user); 
-                            }
-                            
-		}});
+    if (pin && pin > ""){ 
+      $.ajax({type:"post"
+              , data: {method: 'verifyuser', user: user, passwd: passwd, pin: pin}
+              , url: serverCall 
+              , complete: function (XMLHttpRequest, textStatus) {
+                              console.log("antwort vom login: "+ XMLHttpRequest.responseText) ;
+                              if (XMLHttpRequest.responseText.startsWith("OK")){
+                                self.credentials = {user: user, passwd: passwd};
+                                showMsg("PIN VERIFIKATION", "PIN-Verifikation erfolgreich für Benutzer: "+ user, 1000); 
+                                success();
+                              } else {
+                                console.log("PIN-Verifikation fehlgeschlagen fuer: "+ user);
+                                showMsg("PIN VERIFIKATION", "PIN-Verifikation fehlgeschlagen für Benutzer: "+ user, 2000); 
+                                $("#qzi__pin").removeClass("invisible");
+                                $("#edit_pin").val("");
+                              }
+                              
+  		}});
+    } else {
+      $.ajax({type:"post"
+              , data: {method: 'login', user: user, passwd: passwd}
+              , url: serverCall 
+              , complete: function (XMLHttpRequest, textStatus) {
+                              console.log("antwort vom login: "+ XMLHttpRequest.responseText) ;
+                              if (XMLHttpRequest.responseText.endsWith("granted.")){
+                                self.credentials = {user: user, passwd: passwd};
+                                success();
+                              } else if (XMLHttpRequest.responseText.startsWith("PIN")){
+                                console.log("PIN verlangt fuer: "+ user);
+                                showMsg("PIN VERIFIKATION", "Bitte PIN eingeben für Benutzer: "+ user, 2000); 
+                                $("#qzi__pin").removeClass("invisible");
+                                $("#edit_pin").val("");
+                              }else {
+                                console.log("Zugriff verweigert fuer: "+ user);
+                                showMsg("KEIN ZUGANG", "Zugriff verweigert für Benutzer: "+ user); 
+                              }
+                              
+  		}});
+    }
   }
   
   //getimagetypes
