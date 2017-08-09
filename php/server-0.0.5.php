@@ -186,6 +186,7 @@ function do_verifyuser(){
 $server['verifyuser'] = do_verifyuser;
     
 function do_storequiz(){
+    global $QUIZDIR, $fileToStore, $dataToStore;
     if(!empty($dataToStore) )
     {
       $fileToStore = $QUIZDIR. $_REQUEST['quiz'] . ".json";
@@ -206,6 +207,7 @@ function do_storequiz(){
 $server['storequiz'] = do_storequiz;
    
 function do_getquiz(){
+    global $QUIZDIR;
     $fileToStore = $QUIZDIR . $_REQUEST['quiz'] . ".json";
     $content = file_get_contents ($fileToStore);
     if ($content){   
