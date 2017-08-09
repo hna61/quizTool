@@ -228,7 +228,7 @@ function createBackups($fileToStore){
   }
 
   $newname = $dir . "/" . "bak-" . 0 ."-" . $file;
-  $oldname = $fileToStore
+  $oldname = $fileToStore;
   rename ($oldname, $newname);
 }
 
