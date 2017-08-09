@@ -177,7 +177,7 @@
 
    * Load Memory images from json config file
    */
-  Quiz.prototype.save = function(baseurl){
+  Quiz.prototype.save = function(success){
   	console.log("save: "+JSON.stringify(this.options));
     var qz = {};
     qz.name = this.options.name;
@@ -197,7 +197,7 @@
       q.url      = arr[ix].url;
       return q;
     } )
-  	this.toServer(qz, this.options.shortname);
+  	this.toServer(qz, this.options.shortname, success);
   };
   
   /**
@@ -337,13 +337,17 @@
   	var self = this;
     
     $('#qzi__weiter').on("click", function(e) {
+      $(this).addClass("qzc__buttonpressed");
       $("#qzi__answerarea").show();  
-      self.next();
+      self.next(); 
+      $(this).removeClass("qzc__buttonpressed");
     });
     
-    $('#qzi__nochmal').on("click", function(e) {
+    $('#qzi__nochmal').on("click", function(e) {  
+      $(this).addClass("qzc__buttonpressed");
       self.play();
-      self.displayStart();
+      self.displayStart(); 
+      $(this).removeClass("qzc__buttonpressed");
     });
     
     $('#qzi__answer1').on( "click", function(e) {
@@ -361,98 +365,136 @@
      
   	$('#qzi__edit').on('click', function(e){
   		console.log("clicked edit ...");
-  		self.edit();
+      $(this).addClass("qzc__buttonpressed");
+  		self.edit();  
+      $(this).removeClass("qzc__buttonpressed");
   	});
     
   	console.log ('binding edit functions ...');
-  	$('#qzi__next').on('click', function(e){
+  	$('#qzi__next').on('click', function(e){ 
+      $(this).addClass("qzc__buttonpressed");
   		console.log("clicked weiter ...");
-  		self.nextEdit();
+  		self.nextEdit();  
+      $(this).removeClass("qzc__buttonpressed");
   	});
-  	$('#editarea').on('swiperight', function(e){
+  	$('#editarea').on('swiperight', function(e){ 
+      $(this).addClass("qzc__buttonpressed");
   		console.log("swiped weiter ...");
   		self.nextEdit();
   	});
-  	$('#qzi__back').on('click', function(e){
+  	$('#qzi__back').on('click', function(e){ 
+      $(this).addClass("qzc__buttonpressed");
+      $(this).removeClass("qzc__buttonpressed");
   		console.log("clicked back ...");
-  		self.prevEdit();
+  		self.prevEdit();  
+      $(this).removeClass("qzc__buttonpressed");
   	});
-  	$('#qzi__save').on('click', function(e){
+  	$('#qzi__save').on('click', function(e){ 
+      $(this).addClass("qzc__buttonpressed");
   		console.log("clicked save ...");
       self.readEditedQuestion();
-  		self.save();
+      var btn = this;
+  		self.save(function (){$(btn).removeClass("qzc__buttonpressed");});      
   	});
   	$('#qzi__showcolors').on('click', function(e){
+      $(this).addClass("qzc__buttonpressed");
   		console.log("clicked view colors ...");
   		self.setLogoAndColor();
+      $(this).removeClass("qzc__buttonpressed");
   	});
-  	$('#qzi__showlogo').on('click', function(e){
+  	$('#qzi__showlogo').on('click', function(e){ 
+      $(this).addClass("qzc__buttonpressed");
   		console.log("clicked view image ...");
-  		self.editViewLogo();
+  		self.editViewLogo(); 
+      $(this).removeClass("qzc__buttonpressed");
   	});
-  	$('#qzi__showimg').on('click', function(e){
+  	$('#qzi__showimg').on('click', function(e){  
+      $(this).addClass("qzc__buttonpressed");
   		console.log("clicked view image ...");
-  		self.editViewImg();
+  		self.editViewImg();  
+      $(this).removeClass("qzc__buttonpressed");
   	});
-  	$('#qzi__closeimg').on('click', function(e){
+  	$('#qzi__closeimg').on('click', function(e){ 
+      $(this).addClass("qzc__buttonpressed");
   		console.log("clicked close image ...");
   		self.editCloseImg();
+      $(this).removeClass("qzc__buttonpressed");
   	});
-  	$('#qzi__upload').on('click', function(e){
+  	$('#qzi__upload').on('click', function(e){ 
+      $(this).addClass("qzc__buttonpressed");
   		console.log("clicked upload ...");
-  		self.upload();
+      var btn = this;
+  		self.upload(function(){$(btn).removeClass("qzc__buttonpressed");});
   	});
-  	$('#qzi__uploadlogo').on('click', function(e){
+  	$('#qzi__uploadlogo').on('click', function(e){  
+      $(this).addClass("qzc__buttonpressed");
   		console.log("clicked uploadlogo ...");
-  		self.uploadLogo();
+  		self.uploadLogo(function(){$(btn).removeClass("qzc__buttonpressed");});
   	});
   	$('#qzi__neu').on('click', function(e){
+      $(this).addClass("qzc__buttonpressed");
   		console.log("clicked new ...");
-  		self.insertQuestion();
+  		self.insertQuestion();  
+      $(this).removeClass("qzc__buttonpressed");
   	});
   	$('#qzi__weg').on('click', function(e){
+      $(this).addClass("qzc__buttonpressed");
   		console.log("clicked delete ...");
-  		self.deleteQuestion();
+  		self.deleteQuestion();  
+      $(this).removeClass("qzc__buttonpressed");
   	});
-  	$('#qzi__play').on('click', function(e){
+  	$('#qzi__play').on('click', function(e){ 
+      $(this).addClass("qzc__buttonpressed");
   		console.log("clicked spielen ...");
-  		self.play();
+  		self.play();       
+      $(this).removeClass("qzc__buttonpressed");
   	});
-  	$('#qzi__mail').on('click', function(e){
+  	$('#qzi__mail').on('click', function(e){ 
+      $(this).addClass("qzc__buttonpressed");
   		console.log("clicked mail ...");
-  		self.mailResult();
+  		self.mailResult();             //TODO
+      $(this).removeClass("qzc__buttonpressed");
   	});
   	$('#qzi__verbessern').on('click', function(e){
+      $(this).addClass("qzc__buttonpressed");
   		console.log("clicked verbessern ...");
-  		self.mailEnhancement(self.options.email);
+  		self.mailEnhancement(self.options.email); 
+      $(this).removeClass("qzc__buttonpressed");
   	});
-  	$('#qzi__neufragesenden').on('click', function(e){
+  	$('#qzi__neufragesenden').on('click', function(e){ 
+      $(this).addClass("qzc__buttonpressed");
   		console.log("clicked neufragesenden ...");
-  		self.mailNewQuestion(self.options.email);
+  		self.mailNewQuestion(self.options.email); 
+      $(this).removeClass("qzc__buttonpressed");
   	});
   	if (!isMobile()){
   	  $('#qzi__whatsapp').hide();
   	} else {
   	  $('#qzi__whatsapp').show();
   	  $('#qzi__whatsapp').on('click', function(e){
+        $(this).addClass("qzc__buttonpressed");
   		  console.log("clicked whatsapp ...");
-  	  	self.whatsappResult();
+  	  	self.whatsappResult();   
+        $(this).removeClass("qzc__buttonpressed");
   	  });
   	}
     
     // register - screen
-  	$('#qzi__register').on('click', function(e){
+  	$('#qzi__register').on('click', function(e){ 
+      $(this).addClass("qzc__buttonpressed");
   		console.log("clicked register ...");
       if ($('#reg_pwd').val() == $('#reg_pwd2').val()){
         self.serverRegister($('#reg_name').val(),$('#reg_pwd').val(),$('#reg_email').val(),function(){
             self.verify()
           });
-      }
+      } 
+      $(this).removeClass("qzc__buttonpressed");
       
   	});
     
     // login - screen
-  	$('#qzi__login').on('click', function(e){
+  	$('#qzi__login').on('click', function(e){ 
+      $(this).addClass("qzc__buttonpressed");
   		console.log("clicked login ...");
       self.serverLogin( self.options.shortname,
                         $('#edit_name').val(),
@@ -461,29 +503,31 @@
                         function(){
                           self.edit()
                         });
-      $("#qzi__pin").addClass("invisible");                        
+      $("#qzi__pin").addClass("invisible"); 
+      $(this).removeClass("qzc__buttonpressed");                       
   	});
   	$('#edit_pwd').on('keypress', function(e){
-      if (e.which == 13){
+      if (e.which == 13){  
     		console.log("finished password ...");
         self.serverLogin(self.options.shortname,
                         $('#edit_name').val(),$('#edit_pwd').val(),
                         $('#edit_pin').val(),function(){self.edit()});
       }
   	});
-  	$('#qzi__showregister').on('click', function(e){
+  	$('#qzi__showregister').on('click', function(e){ 
+      $(this).addClass("qzc__buttonpressed");
   		console.log("clicked showregister ...");
-  		self.register();
+  		self.register();  
+      $(this).removeClass("qzc__buttonpressed");
   	});
   	$('#qzi__play2').on('click', function(e){
+      $(this).addClass("qzc__buttonpressed");
   		console.log("clicked play2 ...");
-  		self.play();
+  		self.play();  
+      $(this).removeClass("qzc__buttonpressed");
   	});
     
-    // button-click-feeling:
     
-    $(".qzc__button").on("mousedown",function(){$(this).addClass("qzc__buttonpressed");});
-    $(".qzc__button").on("mouseup",function(){$(this).removeClass("qzc__buttonpressed");});
   }
   
   /**
@@ -736,8 +780,8 @@
       }
   };
   
- Quiz.prototype.toServer = function (obj,shortname){ 
-    console.log("daten speichern auf server");
+ Quiz.prototype.toServer = function (obj,shortname, success){ 
+    console.log("Quiz speichern auf Server...");
     
     $.ajax({type:"post"
             , data: {method: 'storequiz'
@@ -747,12 +791,13 @@
                     , passwd: this.credentials.passwd}
             , url: serverCall 
             , complete: function (XMLHttpRequest, textStatus) {
-                            console.log("Antwort vom write: "+ XMLHttpRequest.responseText) ;
+                            console.log("Antwort vom Server: "+ XMLHttpRequest.responseText) ;
                             if (XMLHttpRequest.responseText.startsWith("OK")){
                               showMsg ("Info", "Speichern erfolgreich", 3000);
                             } else {                                          
                               showMsg ("FEHLER", "Speichern fehlgeschlagen: "+XMLHttpRequest.responseText);
                             }
+                            success();
 		}});
   }
   
@@ -843,7 +888,7 @@
 /**
  *  Upload von Bilddateien auf den Server.
  */   
- Quiz.prototype.upload = function (){ 
+ Quiz.prototype.upload = function (success){ 
     console.log("upload auf server, Dateiname: "+$("#edit_imageFile").val() );
     
     var filename = $("#edit_imageFile").val();
@@ -873,6 +918,7 @@
                             } else {
                               showMsg ("FEHLER", "Fehler beim Bild hochladen: "+ XMLHttpRequest.responseText);
                             }
+                            success();
                             
 		}});
   } 
@@ -880,7 +926,7 @@
 /**
  *  Upload von Bilddateien auf den Server.
  */   
- Quiz.prototype.uploadLogo = function (){ 
+ Quiz.prototype.uploadLogo = function (success){ 
     console.log("upload auf server, Dateiname: "+$("#edit_logoFile").val() );
     
     var filename = $("#edit_logoFile").val();
@@ -909,6 +955,7 @@
                             } else {
                               showMsg ("FEHLER", "Fehler beim Bild hochladen: "+ XMLHttpRequest.responseText);
                             }
+                            success();
                             
 		}});
   }
