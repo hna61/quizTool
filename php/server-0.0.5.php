@@ -6,14 +6,17 @@
  *  License: MIT  
  */
  
+define ("VERSION", "0.0.5"); 
+ 
 ini_set('display_errors', 1);
+require_once("../data/config.php");
 
-$VERSION="0.0.5";
-$QUIZDIR="../data/quizes/";
-$IMGDIR="../data/img/";
+logMe ("Quiz-Server, Version: " . VERSION); 
 
-logMe ($VERSION); 
-	
+
+/*
+ *  Hilfsfunktionen
+ */ 
 
 function logMe($logtext){
   $logfile = "../data/usage.log";
@@ -121,11 +124,9 @@ function sendImg($image){
   }   
 }
 
-$dataToStore = $_REQUEST['store_me'];
-$fileToStore = $_REQUEST['filename'];
-$method      = $_REQUEST['method'];
-$grant       = $_REQUEST['grant'];
-
+/*
+ *  Aufrufbare Server-Funktionen
+ */ 
 function do_login(){
     $user =  $_REQUEST['user'];
     if (isVerified()){
@@ -149,7 +150,6 @@ function do_getuser(){
     echo ", pwd: ";
     echo $UserObj["passwd"];
     echo "\r\n";
-    
 }
 $server['getuser'] = do_getuser;
 
@@ -186,10 +186,12 @@ function do_verifyuser(){
 $server['verifyuser'] = do_verifyuser;
     
 function do_storequiz(){
-    global $QUIZDIR, $fileToStore, $dataToStore;
+    $dataToStore = $_REQUEST['store_me'];
+    $fileToStore = $_REQUEST['filename'];
+    
     if(!empty($dataToStore) )
     {
-      $fileToStore = $QUIZDIR. $_REQUEST['quiz'] . ".json";
+      $fileToStore = QUIZDIR. $_REQUEST['quiz'] . ".json";
       // write file
       if (isVerified()){
         logMe ("Spiel ".$fileToStore." gespeichert.");
@@ -207,8 +209,7 @@ function do_storequiz(){
 $server['storequiz'] = do_storequiz;
    
 function do_getquiz(){
-    global $QUIZDIR;
-    $fileToStore = $QUIZDIR . $_REQUEST['quiz'] . ".json";
+    $fileToStore = QUIZDIR . $_REQUEST['quiz'] . ".json";
     $content = file_get_contents ($fileToStore);
     if ($content){   
       logMe ("Spiel ".$fileToStore." geladen.");
@@ -296,14 +297,14 @@ function do_uploadImage(){
         break;
       }
       $newName = uniqid($quiz . '_') . '.jpg';
-      while (file_exists($IMGDIR . $newName)) {
+      while (file_exists(IMGDIR . $newName)) {
          $newName = uniqid($quiz . '_') . '.jpg';
       }
-      if (imagejpeg($dstimg, $IMGDIR . $newName)){
+      if (imagejpeg($dstimg, IMGDIR . $newName)){
         echo "OK " .$newName;
       } else {  
-        logMe ("FEHLER beim Speichern unter " .$IMGDIR .  $newName);
-        echo "FEHLER beim Speichern unter " .$IMGDIR . $newName;
+        logMe ("FEHLER beim Speichern unter " .IMGDIR .  $newName);
+        echo "FEHLER beim Speichern unter " .IMGDIR . $newName;
       }
     }  else {
       logMe ("FEHLER beim Speichern von " . $newName);
@@ -380,11 +381,11 @@ function do_uploadLogo(){
         break;
       }
       $newName = $quiz . '_logo.jpg';
-      if (imagejpeg($dstimg, $IMGDIR . $newName)){
+      if (imagejpeg($dstimg, IMGDIR . $newName)){
         echo "OK " .$newName;
       } else {  
-        logMe ("FEHLER beim Speichern unter " .$IMGDIR .  $newName);
-        echo "FEHLER beim Speichern unter " .$IMGDIR . $newName;
+        logMe ("FEHLER beim Speichern unter " .IMGDIR .  $newName);
+        echo "FEHLER beim Speichern unter " .IMGDIR . $newName;
       }
     }  else {
       logMe ("FEHLER beim Speichern von " . $newName);
@@ -399,10 +400,15 @@ function do_getimagetypes(){
 $server['getimagetypes'] = do_getimagetypes;
 
 
+/*
+ *  Verteile Aufruf auf die implementierenden Funktionen
+ */
+$method      = $_REQUEST['method'];
+
 if ($method && $server[$method]){
      $server[$method](); 
 }  else {
-  "FEHLER: falscher Aufruf des Servers";
+  "FEHLER: falscher Aufruf des Servers, method='".$method."'";
 }
 
 ?>
