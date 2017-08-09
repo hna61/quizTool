@@ -215,6 +215,25 @@ function deleteOrphanedImages(){
   }
 }
 
+function createBackups($fileToStore){
+  if (NUMBACKUPS){
+    $dir = dirname($fileToStore);
+    $file = basename($fileToStore);
+  }
+  
+  for ($i = NUMBACKUPS; $i > 0 ; $i--){ //TODO Schleife an PHP Code anpassen
+    $newname = $dir . "/" . "bak-" . $i ."-" . $file;
+    $oldname = $dir . "/" . "bak-" . ($i-1) ."-" . $file;
+    rename ($oldname, $newname);
+  }
+
+  $newname = $dir . "/" . "bak-" . 0 ."-" . $file;
+  $oldname = $fileToStore
+  rename ($oldname, $newname);
+}
+
+
+
 /*
  *  Aufrufbare Server-Funktionen
  */ 
@@ -285,9 +304,10 @@ function do_storequiz(){
       $fileToStore = QUIZDIR. $_REQUEST['quiz'] . ".json";
       // write file
       if (isVerified()){
-        logMe ("Spiel ".$fileToStore." gespeichert.");
+        createBackups($fileToStore);
         file_put_contents($fileToStore, json_encode (json_decode ($dataToStore),JSON_PRETTY_PRINT));
-        deleteOrphanedImages();
+        deleteOrphanedImages();  
+        logMe ("Spiel ".$fileToStore." gespeichert.");
       	echo "OK, quiz saved to ";
         echo $fileToStore  ;
       } else {   
