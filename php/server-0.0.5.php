@@ -92,13 +92,17 @@ function registerUser($username, $hash, $email){
 
 function isGranted(){  
   $user =  $_REQUEST['user'];
-  $pwd =   $_REQUEST['passwd']; 
+  $pwd =   $_REQUEST['passwd'];  
+  $quiz =   $_REQUEST['quiz']; 
   $UserObj = getUser($user);
-  return ($UserObj && password_verify($pwd,$UserObj["passwd"]));
+  return ($UserObj 
+          && password_verify($pwd,$UserObj["passwd"]) 
+          && (!$quiz || editAllowed($user, $quiz))
+          );
 }
 
 function editAllowed($user, $quiz){
-  $quizDom = json_decode (file_get_contents (QUIZDIR . $quiz));
+  $quizDom = json_decode (file_get_contents (QUIZDIR . $quiz . ".json"));
   if ($quizDom && $quizDom->users && !in_array($user, $quizDom->users)){
     return false;
   } else {
