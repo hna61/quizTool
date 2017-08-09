@@ -97,6 +97,15 @@ function isGranted(){
   return ($UserObj && password_verify($pwd,$UserObj["passwd"]));
 }
 
+function editAllowed($user, $quiz){
+  $quizDom = json_decode (file_get_contents (QUIZDIR . $quiz));
+  if ($quizDom && $quizDom->users && !in_array($user, $quizDom->users)){
+    return false;
+  } else {
+    return true;
+  }
+}
+
 function isVerified(){  
   $user =  $_REQUEST['user'];
   $pwd =   $_REQUEST['passwd']; 
@@ -104,8 +113,9 @@ function isVerified(){
   $UserObj = getUser($user);
   return ($UserObj 
           && password_verify($pwd,$UserObj["passwd"]) 
-          && (!$UserObj["pin"] || $UserObj["pin"]==0));
-          //TODO: quiz muss für Benutzer zugelassen sein.
+          && (!$UserObj["pin"] || $UserObj["pin"]==0)
+          && (!$quiz || editAllowed($user, $quiz))
+          );
 }
 
 
