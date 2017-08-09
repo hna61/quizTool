@@ -7,7 +7,7 @@
  * Copyright 2016-2017, A.Heidemann
  *   
  */
-
+    
  const serverCall = "php/server-0.0.5.php";
 
 
@@ -454,7 +454,8 @@
     // login - screen
   	$('#qzi__login').on('click', function(e){
   		console.log("clicked login ...");
-      self.serverLogin($('#edit_name').val(),
+      self.serverLogin( self.options.shortname,
+                        $('#edit_name').val(),
                         $('#edit_pwd').val(),
                         $('#edit_pin').val(),
                         function(){
@@ -465,7 +466,8 @@
   	$('#edit_pwd').on('keypress', function(e){
       if (e.which == 13){
     		console.log("finished password ...");
-        self.serverLogin($('#edit_name').val(),$('#edit_pwd').val(),
+        self.serverLogin(self.options.shortname,
+                        $('#edit_name').val(),$('#edit_pwd').val(),
                         $('#edit_pin').val(),function(){self.edit()});
       }
   	});
@@ -776,13 +778,13 @@
   }
   
  // Login  
- Quiz.prototype.serverLogin = function (user, passwd, pin, success){ 
+ Quiz.prototype.serverLogin = function (quiz, user, passwd, pin, success){ 
     console.log("login anfrage auf server");
     var self = this;
     
     if (pin && pin > ""){ 
       $.ajax({type:"post"
-              , data: {method: 'verifyuser', user: user, passwd: passwd, pin: pin}
+              , data: {method: 'verifyuser', quiz: quiz, user: user, passwd: passwd, pin: pin}
               , url: serverCall 
               , complete: function (XMLHttpRequest, textStatus) {
                               console.log("antwort vom login: "+ XMLHttpRequest.responseText) ;
@@ -800,7 +802,7 @@
   		}});
     } else {
       $.ajax({type:"post"
-              , data: {method: 'login', user: user, passwd: passwd}
+              , data: {method: 'login', quiz: quiz, user: user, passwd: passwd}
               , url: serverCall 
               , complete: function (XMLHttpRequest, textStatus) {
                               console.log("antwort vom login: "+ XMLHttpRequest.responseText) ;

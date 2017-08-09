@@ -26,6 +26,20 @@ function logMe($logtext){
                     , FILE_APPEND );  
 }
 
+function startsWith($haystack, $needle){
+     $length = strlen($needle);
+     return (substr($haystack, 0, $length) === $needle);
+}
+
+function endsWith($haystack, $needle){
+    $length = strlen($needle);
+    if ($length == 0) {
+        return true;
+    }
+
+    return (substr($haystack, -$length) === $needle);
+}
+
 function getAcceptedImageTypes(){
   return "image/jpeg" ;
 }
@@ -86,10 +100,12 @@ function isGranted(){
 function isVerified(){  
   $user =  $_REQUEST['user'];
   $pwd =   $_REQUEST['passwd']; 
+  $quiz =   $_REQUEST['quiz']; 
   $UserObj = getUser($user);
   return ($UserObj 
           && password_verify($pwd,$UserObj["passwd"]) 
           && (!$UserObj["pin"] || $UserObj["pin"]==0));
+          //TODO: quiz muss für Benutzer zugelassen sein.
 }
 
 
@@ -122,6 +138,81 @@ function sendImg($image){
     http_response_code(404);
     echo ("Datei ". $filePath ." nicht vorhanden.");
   }   
+}
+
+function getImageFiles(){ 
+  $result = array();
+  $handle=opendir (IMGDIR);
+  while ($datei = readdir ($handle)) {
+    if (! startsWith($datei, ".")){
+      $result[] = $datei;
+    }
+  }
+  closedir($handle);
+  
+  return $result;
+}
+
+/*
+ *  Lies die verfügbaren Quiz-Dateien
+ */
+function getQuizes(){
+  $result = array();
+  $handle=opendir (QUIZDIR);
+  while ($datei = readdir ($handle)) {
+    if (endsWith($datei, ".json")){
+      $result[] = $datei;
+    }
+  }
+  closedir($handle);
+  
+  return $result;
+}    
+
+// Liefert alle im Quiz verwendeten Image-Dateien im Array
+function getQuizImages($quiz){
+  $result = array();
+  $quizDom = json_decode (file_get_contents (QUIZDIR . $quiz));   
+  if (strlen($quizDom->logo) > 0){
+    $result[] = basename($quizDom->logo);
+  }
+  foreach($quizDom->questions as $q){
+    if (strlen($q->img) > 0){
+      $result[] = basename($q->img);
+    }
+  } 
+  return $result;
+}
+
+function getReferencedImages(){
+  $result = array(); 
+  foreach(getQuizes() as $quiz){
+    $result = array_merge($result, getQuizImages($quiz));    
+  }
+  return $result;
+}
+
+function getOrphanedImages(){
+  $unused = array();
+  $used = getReferencedImages();
+  $avail = getImageFiles();
+  foreach ($avail as $file){
+    if (!in_array($file, $used)){
+      $unused[] = $file;      
+    } 
+  }
+  return $unused;
+}
+
+function deleteOrphanedImages(){
+  $unused = getOrphanedImages();
+  foreach ($unused as $file){
+    if (unlink(IMGDIR . $file)){
+      logMe("Gelöscht: " . IMGDIR . $file);
+    } else {                               
+      logMe("Fehler beim Löschen: " . IMGDIR . $file);
+    } 
+  }
 }
 
 /*
@@ -196,6 +287,7 @@ function do_storequiz(){
       if (isVerified()){
         logMe ("Spiel ".$fileToStore." gespeichert.");
         file_put_contents($fileToStore, json_encode (json_decode ($dataToStore),JSON_PRETTY_PRINT));
+        deleteOrphanedImages();
       	echo "OK, quiz saved to ";
         echo $fileToStore  ;
       } else {   
@@ -398,6 +490,16 @@ function do_getimagetypes(){
     echo getAcceptedImageTypes();
 }       
 $server['getimagetypes'] = do_getimagetypes;
+       
+function do_test(){
+  echo "\r\n\r\nzum Löschen:\r\n";
+  foreach (getOrphanedImages() as $picfile){
+    echo $picfile . "\r\n";
+  }
+  
+  deleteOrphanedImages();
+}       
+$server['test'] = do_test;
 
 
 /*

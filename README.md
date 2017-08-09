@@ -38,6 +38,9 @@ und ob der Bearbeitungs-Modus benutzt werden soll.
 
 ## Changelog
 
+### 0.0.5
+* separate PHP-Konfigurationsdatei
+
 ### 0.0.4
 * JS-Datei einbinden reicht in html-Datei zur Integration des Spiels
 * Farben (Vorder- und Hintergrund) sind konfigurierbar pro Quiz
