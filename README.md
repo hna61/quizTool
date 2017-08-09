@@ -40,6 +40,10 @@ und ob der Bearbeitungs-Modus benutzt werden soll.
 
 ### 0.0.5
 * separate PHP-Konfigurationsdatei
+* Selbstregistrierung möglich
+* Zugriffsbeschränkung pro Spiel
+* automatische Backup-Dateien
+* automatisches Löschen unbenutzter Bilder
 
 ### 0.0.4
 * JS-Datei einbinden reicht in html-Datei zur Integration des Spiels
