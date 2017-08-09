@@ -11,7 +11,21 @@ define ("VERSION", "0.0.5");
 ini_set('display_errors', 1);
 require_once("../data/config.php");
 
-logMe ("Quiz-Server, Version: " . VERSION); 
+class Zipper extends ZipArchive {
+   public function addDir($path) {
+      $this->addEmptyDir($path);
+      $nodes = glob($path . '/*');
+      foreach ($nodes as $node) {
+         if (is_dir($node)) {
+            $this->addDir($node);
+         } else if (is_file($node))  {
+            $this->addFile($node);
+         }
+      }
+   }
+} 
+
+
 
 
 /*
@@ -526,12 +540,17 @@ function do_getimagetypes(){
 $server['getimagetypes'] = do_getimagetypes;
        
 function do_test(){
-  echo "\r\n\r\nzum Löschen:\r\n";
-  foreach (getOrphanedImages() as $picfile){
-    echo $picfile . "\r\n";
-  }
-  
-  deleteOrphanedImages();
+  $zipfile = tempnam("/tmp", "QZZ-");
+  logMe ("erzeuge ZIP ". $zipfile);
+  $zip = new Zipper();
+  $ret = $zip->open($zipfile, ZipArchive::CREATE |ZipArchive::OVERWRITE);
+  logMe (" zip retcode = " . $ret );
+  $zip->addDir("..");
+  $zip->close();
+              
+  header("Content-Type: " . "application/zip"); 
+  header ('Content-Disposition: attachment; filename="quizbackup.zip"'); 
+  readfile ($zipfile);
 }       
 $server['test'] = do_test;
 
