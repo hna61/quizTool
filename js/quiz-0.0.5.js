@@ -311,7 +311,7 @@
     this.respectUploadImageTypes();
     $("#edit_title").val(this.options.name);
     $("#edit_email").val(this.options.email);
-    $("#edit_user").val(this.options.users.join(','));
+    $("#edit_users").val(this.options.users ? this.options.users.join(','): this.credentials.user);
     $('#edit_fgcolor').val(this.options.fgcolor);
     $('#edit_bgcolor').val(this.options.bgcolor);
     $('#edit_logo').val(this.options.logo);
@@ -674,7 +674,7 @@
 	
       this.options.name=edit_title.value;
       this.options.email=$("#edit_email").val();
-      this.options.email=$("#edit_users").val().split('');
+      this.options.users=$("#edit_users").val().split(',');
       this.options.fgcolor = $('#edit_fgcolor').val();
       this.options.bgcolor = $('#edit_bgcolor').val();
       this.options.logo = $('#edit_logo').val();
