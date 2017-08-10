@@ -6,5 +6,5 @@
 define ("QUIZDIR", "../data/quizes/");
 define ("IMGDIR", "../data/img/"); 
 define ("NUMBACKUPS", 5);
-
+define ("__EMPTYQUIZ__", '{"name":"neues Quiz", "email":"ah@in-howi.de", "questions": [{"question": "", "img": "", "desc":"", "url":"", "answers": ["","","",""]}]}');
 ?>
