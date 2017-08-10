@@ -35,6 +35,14 @@ und ob der Bearbeitungs-Modus benutzt werden soll.
 
 * Spielen:     http://domain.tld/pfadZumSpiel/?quiz=quizname
 * Bearbeiten:  http://domain.tld/pfadZumSpiel/?quiz=quizname&edit=yes 
+ 
+### Backup
+Ein Vollbackup kann vom Server abgefragt werden. Dafür ist der entsprechende
+Benutzer mit Admin-Rechten zu versehen. Die Datei __./data/users.json__ muss 
+dafür manuell bearbeitet werden, der zu berechtigende Nutzer muss zusätzlich 
+die folgende Zeile in sein Profil bekommen:
+' "isAdmin": 1, '  
+Bei der Plazierung ist auf die Kommasetzung zu achten. 
 
 ## Changelog
 
@@ -44,6 +52,7 @@ und ob der Bearbeitungs-Modus benutzt werden soll.
 * Zugriffsbeschränkung pro Spiel
 * automatische Backup-Dateien
 * automatisches Löschen unbenutzter Bilder
+* Vollbackup mit ZIP-Download erzeugen 
 
 ### 0.0.4
 * JS-Datei einbinden reicht in html-Datei zur Integration des Spiels

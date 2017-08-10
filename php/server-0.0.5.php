@@ -11,17 +11,32 @@ define ("VERSION", "0.0.5");
 ini_set('display_errors', 1);
 require_once("../data/config.php");
 
-class Zipper extends ZipArchive {
-   public function addDir($path) {
-      $this->addEmptyDir($path);
-      $nodes = glob($path . '/*');
-      foreach ($nodes as $node) {
-         if (is_dir($node)) {
-            $this->addDir($node);
-         } else if (is_file($node))  {
-            $this->addFile($node);
-         }
+class Zipper extends ZipArchive {  
+   
+   private function addSubDir($path, $baselen) {
+      if (!is_dir($path)){
+          return;
       }
+      $this->addEmptyDir(substr($path, $baselen));
+      
+      $nodes=opendir ($path);
+      while ($node = readdir ($nodes)) {
+        if ($node != "." && $node != ".."){
+          $node = $path . "/" . $node;
+          if (is_dir($node)) {
+            $this->addSubDir($node, $baselen);
+          } else if (is_file($node))  {
+            $this->addFile($node, substr($node, $baselen));
+          }
+        }
+      }
+      closedir($nodes);
+   }
+   
+   public function addDir($path) {
+      $path = realpath($path);
+      $baselen = strlen($path) - strlen(basename($path)); 
+      $this->addSubDir($path, $baselen);
    }
 } 
 
@@ -112,6 +127,17 @@ function isGranted(){
   return ($UserObj 
           && password_verify($pwd,$UserObj["passwd"]) 
           && (!$quiz || editAllowed($user, $quiz))
+          );
+}
+
+function isAdmin(){  
+  $user =  $_REQUEST['user'];
+  $pwd =   $_REQUEST['passwd']; 
+  $UserObj = getUser($user);
+  logMe("admin angefragt für ". $user);
+  return ($UserObj 
+          && password_verify($pwd,$UserObj["passwd"]) 
+          && ($UserObj["isAdmin"])
           );
 }
 
@@ -539,18 +565,28 @@ function do_getimagetypes(){
 }       
 $server['getimagetypes'] = do_getimagetypes;
        
+function do_backup(){
+  if (isAdmin()){
+    $zipfile = tempnam("/tmp", "QZZ-");
+    $zip = new Zipper();
+    $ret = $zip->open($zipfile, ZipArchive::CREATE |ZipArchive::OVERWRITE);
+    $zip->addDir("..");
+    $zip->close();
+                
+    header("Content-Type: " . "application/zip"); 
+    header ('Content-Disposition: attachment; filename="quizbackup.zip"'); 
+    readfile ($zipfile);
+    logMe("Backup erzeugt");
+  } else {
+    logMe("unerlaubtes Backup angefragt");
+    echo  "unerlaubtes Backup angefragt\r\n";
+  }
+}       
+$server['backup'] = do_backup;
+
 function do_test(){
-  $zipfile = tempnam("/tmp", "QZZ-");
-  logMe ("erzeuge ZIP ". $zipfile);
-  $zip = new Zipper();
-  $ret = $zip->open($zipfile, ZipArchive::CREATE |ZipArchive::OVERWRITE);
-  logMe (" zip retcode = " . $ret );
-  $zip->addDir("..");
-  $zip->close();
-              
-  header("Content-Type: " . "application/zip"); 
-  header ('Content-Disposition: attachment; filename="quizbackup.zip"'); 
-  readfile ($zipfile);
+  logMe ("aufgerufen: test");
+  echo "TEST aufgerufen\r\n";
 }       
 $server['test'] = do_test;
 
