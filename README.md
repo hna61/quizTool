@@ -5,7 +5,7 @@ Availabe in german only.
 Zum Start ist dieses Tool vorläufig nur in deutsch verfügbar.
 
 ## Version
-0.0.5 - SNAPSHOT 
+0.0.5
 
 ## Installation
 
@@ -53,6 +53,8 @@ Bei der Plazierung ist auf die Kommasetzung zu achten.
 * automatische Backup-Dateien
 * automatisches Löschen unbenutzter Bilder
 * Vollbackup mit ZIP-Download erzeugen 
+* Fehler bei unteren Editor-Buttons behoben
+* Logs im Server verbessert 
 
 ### 0.0.4
 * JS-Datei einbinden reicht in html-Datei zur Integration des Spiels
