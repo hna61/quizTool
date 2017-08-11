@@ -5,7 +5,7 @@ Availabe in german only.
 Zum Start ist dieses Tool vorläufig nur in deutsch verfügbar.
 
 ## Version
-0.0.5
+0.0.6-SNAPSHOT
 
 ## Installation
 
@@ -45,6 +45,8 @@ die folgende Zeile in sein Profil bekommen:
 Bei der Plazierung ist auf die Kommasetzung zu achten. 
 
 ## Changelog
+
+### 0.0.6
 
 ### 0.0.5
 * separate PHP-Konfigurationsdatei
