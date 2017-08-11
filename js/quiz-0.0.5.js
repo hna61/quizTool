@@ -371,23 +371,29 @@
       $(this).removeClass("qzc__buttonpressed");
   	});
     
-  	console.log ('binding edit functions ...');
-  	$('#qzi__next').on('click', function(e){ 
-      $(this).addClass("qzc__buttonpressed");
-  		console.log("clicked weiter ...");
-  		self.nextEdit();  
-      $(this).removeClass("qzc__buttonpressed");
-  	});
+  	console.log ('binding edit functions ...');  
   	$('#editarea').on('swiperight', function(e){ 
       $(this).addClass("qzc__buttonpressed");
   		console.log("swiped weiter ...");
   		self.nextEdit();
   	});
-  	$('#qzi__back').on('click', function(e){ 
+  	$('.qzc__next').on('click', function(e){ 
+      $(this).addClass("qzc__buttonpressed");
+  		console.log("clicked weiter ...");
+  		self.nextEdit();  
+      $(this).removeClass("qzc__buttonpressed");
+  	});
+  	$('.qzc__back').on('click', function(e){ 
       $(this).addClass("qzc__buttonpressed");
       $(this).removeClass("qzc__buttonpressed");
   		console.log("clicked back ...");
   		self.prevEdit();  
+      $(this).removeClass("qzc__buttonpressed");
+  	}); 
+  	$('.qzc__neu').on('click', function(e){
+      $(this).addClass("qzc__buttonpressed");
+  		console.log("clicked neu ...");
+  		self.insertQuestion();  
       $(this).removeClass("qzc__buttonpressed");
   	});
   	$('#qzi__save').on('click', function(e){ 
@@ -431,12 +437,6 @@
       $(this).addClass("qzc__buttonpressed");
   		console.log("clicked uploadlogo ...");
   		self.uploadLogo(function(){$(btn).removeClass("qzc__buttonpressed");});
-  	});
-  	$('#qzi__neu').on('click', function(e){
-      $(this).addClass("qzc__buttonpressed");
-  		console.log("clicked new ...");
-  		self.insertQuestion();  
-      $(this).removeClass("qzc__buttonpressed");
   	});
   	$('#qzi__weg').on('click', function(e){
       $(this).addClass("qzc__buttonpressed");
