@@ -314,6 +314,7 @@ function do_getuser(){
     echo ", pwd: ";
     echo $UserObj["passwd"];
     echo "\r\n";
+    logMe ("User-daten abgefragt für: ". $user);
 }
 $server['getuser'] = do_getuser;
 
@@ -338,7 +339,6 @@ function do_verifyuser(){
     $pwd =  $_REQUEST['passwd'];
     $pin =  $_REQUEST['pin'];
     $email =  $_REQUEST['email'];
-    logMe("verifiziere ". $user .", ". $email);
     if (verifyUser($user,$pwd,$pin)){
       logMe ("PIN-Verifikation für ". $user. ", ". $email);
       echo "OK: PIN-Verfikation für ". $email;
@@ -369,6 +369,7 @@ function do_storequiz(){
         echo "FEHLER: keine Berechtigung zum Speichern von ".$fileToStore;
       }
     } else {
+      logMe ("FEHLER: storequiz ohne Daten");
       echo "FEHLER: keine Daten zum Speichern";
     }     
 }
@@ -403,7 +404,6 @@ function do_uploadImage(){
     $exif = exif_read_data($tmpFile);
     if ($exif){
       $orientation = $exif["Orientation"];
-      logMe("Orientation of " . $tmpFile . " is " . $orientation);
     }
     
     list ($width,$height,$type) = getimagesize($tmpFile);
@@ -468,6 +468,7 @@ function do_uploadImage(){
       }
       if (imagejpeg($dstimg, IMGDIR . $newName)){
         echo "OK " .$newName;
+        logMe ("Bild-Upload ". $newName);
       } else {  
         logMe ("FEHLER beim Speichern unter " .IMGDIR .  $newName);
         echo "FEHLER beim Speichern unter " .IMGDIR . $newName;
@@ -548,7 +549,8 @@ function do_uploadLogo(){
       }
       $newName = $quiz . '_logo.jpg';
       if (imagejpeg($dstimg, IMGDIR . $newName)){
-        echo "OK " .$newName;
+        echo "OK " .$newName;  
+        logMe ("Logo-Upload ". $newName);
       } else {  
         logMe ("FEHLER beim Speichern unter " .IMGDIR .  $newName);
         echo "FEHLER beim Speichern unter " .IMGDIR . $newName;
@@ -562,6 +564,7 @@ $server['uploadLogo'] = do_uploadLogo;
        
 function do_getimagetypes(){ 
     echo getAcceptedImageTypes();
+    logMe("liefere zulässige ImageTypes");
 }       
 $server['getimagetypes'] = do_getimagetypes;
        
@@ -599,6 +602,7 @@ $method      = $_REQUEST['method'];
 if ($method && $server[$method]){
      $server[$method](); 
 }  else {
+  logMe("FEHLER: falscher Aufruf des Servers, method='".$method."'");
   "FEHLER: falscher Aufruf des Servers, method='".$method."'";
 }
 
