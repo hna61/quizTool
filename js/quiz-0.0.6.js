@@ -276,14 +276,14 @@ function goFullscreen(){
       // logo
       $("#logoarea").html("");
       var img = new Image();
-      $(img).load(function(){
+      $(img).on("load", function(){
         $(this).hide();
         $("#logoarea")
           .removeClass('loading')
           .append(this);
         $(this).fadeIn();
       })
-      .error (function(){
+      .on ("error", function(){
         console.log("kann Bild "+this.options.logo+" nicht laden");
         showMsg("Fehler", "kann Bild nicht laden", 3000);
       })
@@ -623,14 +623,14 @@ function goFullscreen(){
       if (q.img && q.img.length>0){
         $(".qzc__image").html("");
         var img = new Image();
-        $(img).load(function(){
+        $(img).on("load", function(){
           $(this).hide();
           $(".qzc__image")
             .removeClass('loading')
             .append(this);
           $(this).fadeIn();
         })
-        .error (function(){
+        .on ("error", function(){
           console.log("kann Bild "+q.img+" nicht laden");
           showMsg("Fehler", "kann Bild nicht laden", 3000);
         })

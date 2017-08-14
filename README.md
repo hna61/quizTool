@@ -47,6 +47,7 @@ Bei der Plazierung ist auf die Kommasetzung zu achten.
 ## Changelog
 
 ### 0.0.6
+* auf lokale jquery 3.2.1-Kopie migriert
 
 ### 0.0.5
 * separate PHP-Konfigurationsdatei
