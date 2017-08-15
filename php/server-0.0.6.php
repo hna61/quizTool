@@ -6,10 +6,13 @@
  *  License: MIT  
  */
  
-define ("VERSION", "0.0.5"); 
+define ("VERSION", "0.0.6"); 
  
 ini_set('display_errors', 1);
-require_once("../data/config.php");
+require_once "config-base.php";
+if (file_exists ("config-local.php")){
+  require_once "config-local.php";
+}
 
 class Zipper extends ZipArchive {  
    
@@ -171,11 +174,11 @@ function mailPin($email, $pin){
 		. "Die PIN ist    "
 		. $pin . ".\r\n\r\n"
 		. "Bitte nutze den folgenden Link dazu:\r\n"
-		. "* http://tests.in-howi.de/quiztest/index.html?pin="
+		. "* ".$_SERVER['HTTP_REFERER']."?pin="
 		. $pin
-		. "&edit\r\n\r\n-Dein Server-";
+		. "&edit\r\n\r\n-Dein ".QZ_ABSENDER_NAME."-";
   
-  $headers = "From: Quiz-Server <quiz-server@in-howi.de>";
+  $headers = "From: ".QZ_ABSENDER_NAME." <".QZ_ABSENDER_EMAIL.">\r\n";
 
   return mail($email, $subject, $body, $headers);
 }
@@ -196,7 +199,7 @@ function sendImg($image){
 
 function getImageFiles(){ 
   $result = array();
-  $handle=opendir (IMGDIR);
+  $handle=opendir (QZ_IMGDIR);
   while ($datei = readdir ($handle)) {
     if (! startsWith($datei, ".")){
       $result[] = $datei;
@@ -261,21 +264,21 @@ function getOrphanedImages(){
 function deleteOrphanedImages(){
   $unused = getOrphanedImages();
   foreach ($unused as $file){
-    if (unlink(IMGDIR . $file)){
-      logMe("Gelöscht: " . IMGDIR . $file);
+    if (unlink(QZ_IMGDIR . $file)){
+      logMe("Gelöscht: " . QZ_IMGDIR . $file);
     } else {                               
-      logMe("Fehler beim Löschen: " . IMGDIR . $file);
+      logMe("Fehler beim Löschen: " . QZ_IMGDIR . $file);
     } 
   }
 }
 
 function createBackups($fileToStore){
-  if (NUMBACKUPS){
+  if (QZ_NUMBACKUPS){
     $dir = dirname($fileToStore);
     $file = basename($fileToStore);
   }
   
-  for ($i = NUMBACKUPS; $i > 0 ; $i--){ //TODO Schleife an PHP Code anpassen
+  for ($i = QZ_NUMBACKUPS; $i > 0 ; $i--){ //TODO Schleife an PHP Code anpassen
     $newname = $dir . "/" . "bak-" . $i ."-" . $file;
     $oldname = $dir . "/" . "bak-" . ($i-1) ."-" . $file;
     rename ($oldname, $newname);
@@ -355,7 +358,7 @@ function do_storequiz(){
     
     if(!empty($dataToStore) )
     {
-      $fileToStore = QUIZDIR. $_REQUEST['quiz'] . ".json";
+      $fileToStore = QZ_QUIZDIR. $_REQUEST['quiz'] . ".json";
       // write file
       if (isVerified()){
         createBackups($fileToStore);
@@ -376,7 +379,7 @@ function do_storequiz(){
 $server['storequiz'] = do_storequiz;
    
 function do_getquiz(){
-    $fileToStore = QUIZDIR . $_REQUEST['quiz'] . ".json";
+    $fileToStore = QZ_QUIZDIR . $_REQUEST['quiz'] . ".json";
     $content = file_get_contents ($fileToStore);
     if ($content){   
       logMe ("Spiel ".$fileToStore." geladen.");
@@ -463,15 +466,15 @@ function do_uploadImage(){
         break;
       }
       $newName = uniqid($quiz . '_') . '.jpg';
-      while (file_exists(IMGDIR . $newName)) {
+      while (file_exists(QZ_IMGDIR . $newName)) {
          $newName = uniqid($quiz . '_') . '.jpg';
       }
-      if (imagejpeg($dstimg, IMGDIR . $newName)){
+      if (imagejpeg($dstimg, QZ_IMGDIR . $newName)){
         echo "OK " .$newName;
         logMe ("Bild-Upload ". $newName);
       } else {  
-        logMe ("FEHLER beim Speichern unter " .IMGDIR .  $newName);
-        echo "FEHLER beim Speichern unter " .IMGDIR . $newName;
+        logMe ("FEHLER beim Speichern unter " .QZ_IMGDIR .  $newName);
+        echo "FEHLER beim Speichern unter " .QZ_IMGDIR . $newName;
       }
     }  else {
       logMe ("FEHLER beim Speichern von " . $newName);
@@ -548,12 +551,12 @@ function do_uploadLogo(){
         break;
       }
       $newName = $quiz . '_logo.jpg';
-      if (imagejpeg($dstimg, IMGDIR . $newName)){
+      if (imagejpeg($dstimg, QZ_IMGDIR . $newName)){
         echo "OK " .$newName;  
         logMe ("Logo-Upload ". $newName);
       } else {  
-        logMe ("FEHLER beim Speichern unter " .IMGDIR .  $newName);
-        echo "FEHLER beim Speichern unter " .IMGDIR . $newName;
+        logMe ("FEHLER beim Speichern unter " .QZ_IMGDIR .  $newName);
+        echo "FEHLER beim Speichern unter " .QZ_IMGDIR . $newName;
       }
     }  else {
       logMe ("FEHLER beim Speichern von " . $newName);
