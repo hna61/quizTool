@@ -7,6 +7,10 @@ Zum Start ist dieses Tool vorläufig nur in deutsch verfügbar.
 ## Version
 0.0.6-SNAPSHOT
 
+## Demo
+Eine Demo-Version ist verfügbar unter der Adresse:
+* http://tests.in-howi.de/quiztest/
+
 ## Installation
 
 ### Voraussetzungen
