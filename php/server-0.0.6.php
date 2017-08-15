@@ -9,9 +9,10 @@
 define ("VERSION", "0.0.6"); 
  
 ini_set('display_errors', 1);
-require_once "config-base.php";
 if (file_exists ("config-local.php")){
   require_once "config-local.php";
+} else {   
+  require_once "config-base.php";
 }
 
 class Zipper extends ZipArchive {  
@@ -167,6 +168,8 @@ function isVerified(){
 
 
 function mailPin($email, $pin){
+  logMe("erzeuge mail, von ".QZ_ABSENDER_NAME." <".QZ_ABSENDER_EMAIL.">" );
+  logMe("erzeuge mail, quelle: ".$_SERVER['HTTP_REFERER'] );
 	$subject = "Zugang zum Quiz-Server";
 	$body = "Hallo \r\n\r\n"
 		. "du musst den Zugang zum Quiz-Server noch mit einer"
@@ -178,7 +181,7 @@ function mailPin($email, $pin){
 		. $pin
 		. "&edit\r\n\r\n-Dein ".QZ_ABSENDER_NAME."-";
   
-  $headers = "From: ".QZ_ABSENDER_NAME." <".QZ_ABSENDER_EMAIL.">\r\n";
+  $headers = "From: ".QZ_ABSENDER_NAME." <".QZ_ABSENDER_EMAIL.">";
 
   return mail($email, $subject, $body, $headers);
 }
