@@ -107,24 +107,25 @@
     <div class='qzc__next qzc__button' title='die nächste Frage anzeigen und bearbeiten' >n&auml;chste Frage</div>
     <div class='qzc__neu qzc__button' title='eine neue Frage anlegen und bearbeiten' >neue Frage</div>
     </div>
-    <div id='qzi__questionarea' class='qzc__questionarea'>
-      <div id='qzi__question' class='qzc__question'>Frage: <textarea id='edit_frage'  rows='2' cols='50'></textarea></div>
-      <div id='qzi__editimage' class='qzc__question'>Bilddatei: <input id='edit_image' size='50'/>
-        <div id="qzi__showimg" class="qzc__button" title="Bild anzeigen">anzeigen</div>
-      </div>
-      <input type="file" id="edit_imageFile" />
-      <div id='qzi__upload' class='qzc__button' title='Bilddatei hochladen' >Upload</div>
-    </div>
-    <div  id='qzi__answerarea' class='qzc__answerarea'>
-    <div id='qzi__answer1' class='qzc__answer'>korrekte Antwort: <input id='edit_antwort1' size='50'/></div>
-    <div id='qzi__answer2' class='qzc__answer'>falsche Antwort: <input id='edit_antwort2'  size='50'/></div>
-    <div id='qzi__answer3' class='qzc__answer'>falsche Antwort: <input id='edit_antwort3'  size='50'/></div>
-    <div id='qzi__answer4' class='qzc__answer'>falsche Antwort: <input id='edit_antwort4'  size='50'/></div>
-    </div>
-    <div id='qzi__descarea' class='qzc__descarea'>
-    <div id='qzi__desc' class='qzc__desc'>Erl&auml;uterung: <textarea id='edit_erlaeuterung'  rows='5' cols='50'></textarea></div>
-    <div id='qzi__link' class='qzc__desc'>Info-URL: <input id='edit_link' size='50'/></div>
-    </div>
+    
+    <table>
+      <tr>
+      <th><div id='qzi__question' class='qzc__question'>Frage:</div></th><td> <textarea id='edit_frage'  rows='2' cols='50'></textarea></td></tr>
+      <tr><th><div id='qzi__editimage' class='qzc__question'>Bilddatei: </div></th><td><input id='edit_image' size='50'/></td>
+        <td><div id="qzi__showimg" class="qzc__button" title="Bild anzeigen">anzeigen</div></td></tr>
+      <tr><td></td><td> <input type="file" id="edit_imageFile" /></td>
+        <td><div id='qzi__upload' class='qzc__button' title='Bilddatei hochladen' >Upload</div></td></tr>
+ 
+    <tr><th>korrekte Antwort: </th><td><input id='edit_antwort1' size='50'/></td></tr>
+    <tr><th>falsche Antwort: </th><td><input id='edit_antwort2'  size='50'/></td></tr>
+    <tr><th>falsche Antwort: </th><td><input id='edit_antwort3'  size='50'/></td></tr>
+    <tr><th>falsche Antwort: </th><td><input id='edit_antwort4'  size='50'/></td></tr>
+    
+    
+    <tr><th>Erl&auml;uterung: </th><td><textarea id='edit_erlaeuterung'  rows='5' cols='50'></textarea></td></tr>
+    <tr><th>Info-URL: </th><td><input id='edit_link' size='50'/></td></tr>
+    </table>
+    
     <div class='qzc__buttonarea'>
     <div class='qzc__back qzc__button' title='die vorhergehende Frage anzeigen und bearbeiten'>vorige Frage</div>
     <div class='qzc__next qzc__button' title='die nächste Frage anzeigen und bearbeiten' >n&auml;chste Frage</div>

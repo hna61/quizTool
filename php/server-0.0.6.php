@@ -11,9 +11,8 @@ define ("VERSION", "0.0.6");
 ini_set('display_errors', 1);
 if (file_exists ("config-local.php")){
   require_once "config-local.php";
-} else {   
-  require_once "config-base.php";
-}
+} 
+require_once "config-base.php";
 
 class Zipper extends ZipArchive {  
    
