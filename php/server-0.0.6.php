@@ -291,6 +291,93 @@ function createBackups($fileToStore){
   rename ($oldname, $newname);
 }
 
+function uploadImageFile($tmpFile, $newName, $newWidth, $newHeight){
+    $exif = exif_read_data($tmpFile);
+    if ($exif){
+      $orientation = $exif["Orientation"];
+      logMe("Orientation of " . $tmpFile . " is " . $orientation);
+    }
+    
+    $widthFactor = $newWidth / $newHeight;
+    
+    list ($width,$height,$type) = getimagesize($tmpFile);
+    
+    $srcimg = imagecreatefromjpeg($tmpFile);
+    if ($srcimg){
+      switch($orientation){
+        case 1: // nothing
+        break;
+
+        case 2: // horizontal flip
+        //$resizeObj->flipImage($path,1);
+        logMe("cannot do horizontal flip on ". $tmpFile);
+        break;
+
+        case 3: // 180 rotate left
+        $srcimg = imagerotate($srcimg, 180, 0); 
+        logMe(" do 180 rotate left on ". $tmpFile);
+        break;
+
+        case 4: // vertical flip
+        //$resizeObj->flipImage($path,2);  
+        logMe("cannot do vertical flip on ". $tmpFile);
+        break;
+
+        case 5: // vertical flip + 90 rotate right
+        //$resizeObj->flipImage($path, 2);
+        //$resizeObj->rotateImage($path, -90);  
+        logMe("cannot do vertical flip + 90 rotate right on ". $tmpFile);
+        break;
+
+        case 6: // 90 rotate right
+        $srcimg = imagerotate($srcimg, -90, 0);  
+        $tmp = $width;
+        $width = $height;
+        $height = $tmp;
+        logMe(" do 90 rotate right on ". $tmpFile);
+        break;
+
+        case 7: // horizontal flip + 90 rotate right
+        //$resizeObj->flipImage($path,1);    
+        //$resizeObj->rotateImage($path, -90); 
+        logMe("cannot do horizontal flip + 90 rotate right on ". $tmpFile);
+        break;
+
+        case 8:    // 90 rotate left
+        $srcimg = imagerotate($srcimg, 90, 0); 
+        $tmp = $width;
+        $width = $height;
+        $height = $tmp;
+        logMe(" do 90 rotate left on ". $tmpFile);
+        break;
+      }
+      
+      if ($width > ($height * $widthFactor)){
+        $x = floor(($width-($height * $widthFactor))/2);
+        $y = 0;
+        $width = $height * $widthFactor;
+      } else {
+        $x = 0;
+        $y = floor((($height) - floor($width / $widthFactor))/2);
+        $height = floor($width / $widthFactor);
+      }
+      $resize = $newHeight / $height;
+      
+      $dstimg = imagecreatetruecolor ($newWidth, $newHeight);
+      if ($srcimg && $dstimg && imagecopyresampled ($dstimg, $srcimg, 0, 0, $x, $y, $newWidth, $newHeight, $width, $height)){
+        if (imagejpeg($dstimg, QZ_IMGDIR . $newName)){
+          echo "OK " .$newName;  
+          logMe ("Logo-Upload ". $newName);
+        } else {  
+          logMe ("FEHLER beim Speichern unter " .QZ_IMGDIR .  $newName);
+          echo "FEHLER beim Speichern unter " .QZ_IMGDIR . $newName;
+        }
+      }
+    }  else {
+      logMe ("FEHLER beim Speichern von " . $newName);
+      echo "FEHLER beim Speichern von " . $newName;
+    }
+}
 
 
 /*
@@ -406,164 +493,23 @@ function do_uploadImage(){
     $quiz = $_REQUEST['quiz'];
     $tmpFile = $_FILES['file']['tmp_name'];
     
-    $exif = exif_read_data($tmpFile);
-    if ($exif){
-      $orientation = $exif["Orientation"];
+    $newName = uniqid($quiz . '_') . '.jpg';
+    while (file_exists(QZ_IMGDIR . $newName)) {
+       $newName = uniqid($quiz . '_') . '.jpg';
     }
     
-    list ($width,$height,$type) = getimagesize($tmpFile);
-    if ($width > $height){
-      $x = floor(($width-$height)/2);
-      $y = 0;
-      $width = $height;
-    } else {
-      $x = 0;
-      $y = floor(($height - $width)/2);
-      $height = $width;
-    }
-    $resize = 300 / $height;
-    
-    $srcimg = imagecreatefromjpeg($tmpFile);
-    $dstimg = imagecreatetruecolor (300,300);
-    if ($srcimg && $dstimg && imagecopyresampled ($dstimg, $srcimg, 0, 0, $x, $y, 300, 300, $height, $width)){
-      switch($orientation){
-        case 1: // nothing
-        break;
-
-        case 2: // horizontal flip
-        //$resizeObj->flipImage($path,1);
-        logMe("cannot do horizontal flip on ". $tmpFile);
-        break;
-
-        case 3: // 180 rotate left
-        $dstimg = imagerotate($dstimg, 180, 0); 
-        logMe(" do 180 rotate left on ". $tmpFile);
-        break;
-
-        case 4: // vertical flip
-        //$resizeObj->flipImage($path,2);  
-        logMe("cannot do vertical flip on ". $tmpFile);
-        break;
-
-        case 5: // vertical flip + 90 rotate right
-        //$resizeObj->flipImage($path, 2);
-        //$resizeObj->rotateImage($path, -90);  
-        logMe("cannot do vertical flip + 90 rotate right on ". $tmpFile);
-        break;
-
-        case 6: // 90 rotate right
-        $dstimg = imagerotate($dstimg, -90, 0); 
-        logMe(" do 90 rotate right on ". $tmpFile);
-        break;
-
-        case 7: // horizontal flip + 90 rotate right
-        //$resizeObj->flipImage($path,1);    
-        //$resizeObj->rotateImage($path, -90); 
-        logMe("cannot do horizontal flip + 90 rotate right on ". $tmpFile);
-        break;
-
-        case 8:    // 90 rotate left
-        $dstimg = imagerotate($dstimg, 90, 0); 
-        logMe(" do 90 rotate left on ". $tmpFile);
-        break;
-      }
-      $newName = uniqid($quiz . '_') . '.jpg';
-      while (file_exists(QZ_IMGDIR . $newName)) {
-         $newName = uniqid($quiz . '_') . '.jpg';
-      }
-      if (imagejpeg($dstimg, QZ_IMGDIR . $newName)){
-        echo "OK " .$newName;
-        logMe ("Bild-Upload ". $newName);
-      } else {  
-        logMe ("FEHLER beim Speichern unter " .QZ_IMGDIR .  $newName);
-        echo "FEHLER beim Speichern unter " .QZ_IMGDIR . $newName;
-      }
-    }  else {
-      logMe ("FEHLER beim Speichern von " . $newName);
-      echo "FEHLER beim Speichern von " . $newName;
-    }
+    uploadImageFile($tmpFile, $newName, 300, 300);
 }
 $server['uploadImage'] = do_uploadImage;
     
 function do_uploadLogo(){
     // upload and resize
     $quiz = $_REQUEST['quiz'];
-    $tmpFile = $_FILES['file']['tmp_name'];
+    $tmpFile = $_FILES['file']['tmp_name'];   
     
-    $exif = exif_read_data($tmpFile);
-    if ($exif){
-      $orientation = $exif["Orientation"];
-      logMe("Orientation of " . $tmpFile . " is " . $orientation);
-    }
+    $newName = $quiz . '_logo.jpg';
     
-    list ($width,$height,$type) = getimagesize($tmpFile);
-    if ($width > ($height * 6)){
-      $x = floor(($width-($height * 6))/2);
-      $y = 0;
-      $width = $height * 6;
-    } else {
-      $x = 0;
-      $y = floor((($height) - floor($width / 6))/2);
-      $height = floor($width / 6);
-    }
-    $resize = 50 / $height;
-    
-    $srcimg = imagecreatefromjpeg($tmpFile);
-    $dstimg = imagecreatetruecolor (300, 50);
-    if ($srcimg && $dstimg && imagecopyresampled ($dstimg, $srcimg, 0, 0, $x, $y, 300, 50, $width, $height)){
-      switch($orientation){
-        case 1: // nothing
-        break;
-
-        case 2: // horizontal flip
-        //$resizeObj->flipImage($path,1);
-        logMe("cannot do horizontal flip on ". $tmpFile);
-        break;
-
-        case 3: // 180 rotate left
-        $dstimg = imagerotate($dstimg, 180, 0); 
-        logMe(" do 180 rotate left on ". $tmpFile);
-        break;
-
-        case 4: // vertical flip
-        //$resizeObj->flipImage($path,2);  
-        logMe("cannot do vertical flip on ". $tmpFile);
-        break;
-
-        case 5: // vertical flip + 90 rotate right
-        //$resizeObj->flipImage($path, 2);
-        //$resizeObj->rotateImage($path, -90);  
-        logMe("cannot do vertical flip + 90 rotate right on ". $tmpFile);
-        break;
-
-        case 6: // 90 rotate right
-        $dstimg = imagerotate($dstimg, -90, 0); 
-        logMe(" do 90 rotate right on ". $tmpFile);
-        break;
-
-        case 7: // horizontal flip + 90 rotate right
-        //$resizeObj->flipImage($path,1);    
-        //$resizeObj->rotateImage($path, -90); 
-        logMe("cannot do horizontal flip + 90 rotate right on ". $tmpFile);
-        break;
-
-        case 8:    // 90 rotate left
-        $dstimg = imagerotate($dstimg, 90, 0); 
-        logMe(" do 90 rotate left on ". $tmpFile);
-        break;
-      }
-      $newName = $quiz . '_logo.jpg';
-      if (imagejpeg($dstimg, QZ_IMGDIR . $newName)){
-        echo "OK " .$newName;  
-        logMe ("Logo-Upload ". $newName);
-      } else {  
-        logMe ("FEHLER beim Speichern unter " .QZ_IMGDIR .  $newName);
-        echo "FEHLER beim Speichern unter " .QZ_IMGDIR . $newName;
-      }
-    }  else {
-      logMe ("FEHLER beim Speichern von " . $newName);
-      echo "FEHLER beim Speichern von " . $newName;
-    }
+    uploadImageFile($tmpFile, $newName, 300, 50);
 }
 $server['uploadLogo'] = do_uploadLogo;
        
