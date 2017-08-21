@@ -498,7 +498,7 @@ function do_uploadImage(){
        $newName = uniqid($quiz . '_') . '.jpg';
     }
     
-    uploadImageFile($tmpFile, $newName, 300, 300);
+    uploadImageFile($tmpFile, $newName, QZ_BILDGROESSE, QZ_BILDGROESSE);
 }
 $server['uploadImage'] = do_uploadImage;
     
@@ -538,6 +538,42 @@ function do_backup(){
 }       
 $server['backup'] = do_backup;
 
+function do_listversions(){
+    $res = array();
+    $quiz = $_REQUEST['quiz'];
+    $path = QZ_QUIZDIR;    
+    $rx = "/bak-\d+-".$quiz."\.json/";  
+    logMe("list ".$path." mit regexp: ". $rx); 
+    
+    $nodes=opendir ($path);
+    while ($node = readdir ($nodes)) { 
+      logMe ("test ". $node);
+      if (preg_match($rx, $node)=== 1){
+        logMe ("match ". $node);
+        $res[] = (object) ['name' => $node, 'time'=> date( "Y-m-d H:i:s", filemtime($path."/".$node))];
+      }
+    }
+    closedir($nodes);
+    echo json_encode($res, JSON_PRETTY_PRINT);
+  }
+$server['listversions'] = do_listversions;  
+
+function do_restore(){
+    $quiz = $_REQUEST['quiz'];
+    $version = $_REQUEST['version'];
+    $path = QZ_QUIZDIR. "/" . $version; 
+    $content = file_get_contents ($path);
+    if ($content){   
+      logMe ("Version ".$version." wiederhergestellt.");
+      echo $content;
+    } else {
+      logMe ("Version ".$version." unbekannt.");
+      echo "FEHLER: Version ".$version." unbekannt.";
+    }  
+    
+  }
+$server['restore'] = do_restore;  
+      
 function do_test(){
   logMe ("aufgerufen: test");
   echo "TEST aufgerufen\r\n";

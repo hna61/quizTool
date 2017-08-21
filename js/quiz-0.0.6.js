@@ -420,6 +420,19 @@ function goFullscreen(){
       var btn = this;
   		self.save(function (){$(btn).removeClass("qzc__buttonpressed");});      
   	});
+  	$('#qzi__listrestore').on('click', function(e){ 
+      $(this).addClass("qzc__buttonpressed");
+  		console.log("clicked listrestore ...");
+      self.listRestore();
+      $("#versionarea").show();
+  		$(this).removeClass("qzc__buttonpressed");      
+  	});
+  	$('#qzi__closeversions').on('click', function(e){ 
+      $(this).addClass("qzc__buttonpressed");
+  		console.log("clicked closeversions ...");
+      $("#versionarea").hide();
+  		$(this).removeClass("qzc__buttonpressed");      
+  	});
   	$('#qzi__showcolors').on('click', function(e){
       $(this).addClass("qzc__buttonpressed");
   		console.log("clicked view colors ...");
@@ -977,6 +990,38 @@ function goFullscreen(){
                             success();
                             
 		}});
+  }
+  
+  
+  Quiz.prototype.listRestore = function (onsuccess){
+    var jsonUrl = serverCall + "?method=listversions&quiz=" + this.options.shortname ;
+    console.log("requesting "+ jsonUrl);
+
+    var self = this;
+//    var answer = $.getJSON(jsonUrl, '', function(data){
+    $.ajax({dataType: 'json',
+            url: jsonUrl,
+            data: {},
+            success: function(data){
+                        if (data){  
+                          var buttons = [];
+                          for (var i=0; i<data.length; i++){
+                            buttons.push("<div id='"+data[i].name +"' class='qzc__version qzc__button'>"+ data[i].time +"</div>");
+                          }
+                          $('#qzi__versionlist').html(buttons.join("<br />"));
+                          $(".qzc__version").on("click", function(btn){
+                            console.log ("Version "+ btn.currentTarget.id +" anfordern");
+                          });
+                          if (onsuccess) onsuccess();
+                          showMsg ("Info", "Quiz geladen: "+ data.name, 3000);
+                        }  else {
+                          showMsg ("Fehler", "Kann Versionen nicht laden: "+ data.name);
+                        }
+                      },
+            error: function (textStatus, errorThrown) {
+                      showMsg ("FEHLER", textStatus);
+                    }
+            });
   }
   
     
