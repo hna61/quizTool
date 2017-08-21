@@ -322,7 +322,7 @@ function goFullscreen(){
   /**
    * Load Memory images from json config file
    */
-  Quiz.prototype.edit = function(baseurl){  
+  Quiz.prototype.edit = function(){  
     // set page title
     document.title = "Edit: "+this.options.name; 
     this.respectUploadImageTypes();
@@ -991,7 +991,32 @@ function goFullscreen(){
                             
 		}});
   }
-  
+
+
+  Quiz.prototype.restoreVersion = function (version, onsuccess){
+    var jsonUrl = serverCall + "?method=restore&quiz=" + this.options.shortname +"&version="+version;
+    console.log("requesting "+ jsonUrl);
+
+    var self = this;
+    $.ajax({dataType: 'json',
+            url: jsonUrl,
+            data: {},
+            success: function(data){
+                        if (data){  
+                          self.prepare(data);
+                          self.edit();
+                          $("#versionarea").hide();
+                          if (onsuccess) onsuccess();
+                          showMsg ("Info", "Version geladen: "+ version, 2000);
+                        }  else {
+                          showMsg ("Fehler", "Kann Version nicht laden: "+ version);
+                        }
+                      },
+            error: function (textStatus, errorThrown) {
+                      showMsg ("FEHLER", textStatus);
+                    }
+            });
+  }  
   
   Quiz.prototype.listRestore = function (onsuccess){
     var jsonUrl = serverCall + "?method=listversions&quiz=" + this.options.shortname ;
@@ -1011,6 +1036,7 @@ function goFullscreen(){
                           $('#qzi__versionlist').html(buttons.join("<br />"));
                           $(".qzc__version").on("click", function(btn){
                             console.log ("Version "+ btn.currentTarget.id +" anfordern");
+                            self.restoreVersion(btn.currentTarget.id);
                           });
                           if (onsuccess) onsuccess();
                           showMsg ("Info", "Quiz geladen: "+ data.name, 3000);

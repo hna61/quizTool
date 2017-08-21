@@ -145,10 +145,12 @@ function isAdmin(){
 }
 
 function editAllowed($user, $quiz){
-  $quizDom = json_decode (file_get_contents (QUIZDIR . $quiz . ".json"));
-  if ($quizDom && $quizDom->users && !in_array($user, $quizDom->users)){
+  $quizDom = json_decode (file_get_contents (QZ_QUIZDIR . $quiz . ".json"));
+  if (!$quizDom || !$quizDom->users || !in_array($user, $quizDom->users)){
+    logMe ("editAllowed for ".$user.", ".$quiz);
     return false;
   } else {
+    logMe ("editAllowed failed for ".$user.", ".$quiz);
     return true;
   }
 }
@@ -231,7 +233,7 @@ function getQuizes(){
 // Liefert alle im Quiz verwendeten Image-Dateien im Array
 function getQuizImages($quiz){
   $result = array();
-  $quizDom = json_decode (file_get_contents (QUIZDIR . $quiz));   
+  $quizDom = json_decode (file_get_contents (QZ_QUIZDIR . $quiz));   
   if (strlen($quizDom->logo) > 0){
     $result[] = basename($quizDom->logo);
   }
