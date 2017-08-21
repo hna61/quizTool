@@ -194,6 +194,7 @@ function goFullscreen(){
     var qz = {};
     qz.name = this.options.name;
     qz.email = this.options.email;
+    qz.count = this.options.count;
     qz.copyright  = this.options.copyright;
     qz.fgcolor = this.options.fgcolor;
     qz.bgcolor = this.options.bgcolor;
@@ -436,6 +437,7 @@ function goFullscreen(){
   	$('#qzi__showcolors').on('click', function(e){
       $(this).addClass("qzc__buttonpressed");
   		console.log("clicked view colors ...");
+  		self.readEditedQuestion();
   		self.setLogoAndColor();
       $(this).removeClass("qzc__buttonpressed");
   	});
@@ -466,6 +468,7 @@ function goFullscreen(){
   	$('#qzi__uploadlogo').on('click', function(e){  
       $(this).addClass("qzc__buttonpressed");
   		console.log("clicked uploadlogo ...");
+  		var btn = this;
   		self.uploadLogo(function(){$(btn).removeClass("qzc__buttonpressed");});
   	});
   	$('#qzi__weg').on('click', function(e){
@@ -684,6 +687,7 @@ function goFullscreen(){
       var q = this.options.questions[this.questionId];
 	    console.log("display for edit #"+this.questionId);	
       edit_frage.value = q.question;	
+      $("#edit_colcount").val(this.options.count);
       edit_image.value = q.img;
       edit_link.value = q.url;
       edit_antwort1.value = q.answers[0];
@@ -705,6 +709,7 @@ function goFullscreen(){
       this.options.name=edit_title.value;
       this.options.email=$("#edit_email").val();
       this.options.users=$("#edit_users").val().split(',');
+      this.options.count=$("#edit_colcount").val();
       this.options.fgcolor = $('#edit_fgcolor').val();
       this.options.bgcolor = $('#edit_bgcolor').val();
       this.options.logo = $('#edit_logo').val();
@@ -983,7 +988,7 @@ function goFullscreen(){
                               var newName = XMLHttpRequest.responseText.substr(3);
                               console.log ("setze Bild auf img/"+newName);
                               $("#edit_logo").val("img/"+newName);
-                              showMsg ("Info", "Bild erfolgreich gespeichert.", 3000);
+                              showMsg ("Info", "Logo erfolgreich gespeichert.", 2000);
                             } else {
                               showMsg ("FEHLER", "Fehler beim Bild hochladen: "+ XMLHttpRequest.responseText);
                             }

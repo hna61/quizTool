@@ -219,14 +219,15 @@ function getImageFiles(){
  */
 function getQuizes(){
   $result = array();
-  $handle=opendir (QUIZDIR);
+  $handle=opendir (QZ_QUIZDIR);
   while ($datei = readdir ($handle)) {
     if (endsWith($datei, ".json")){
       $result[] = $datei;
     }
   }
   closedir($handle);
-  
+  logMe("Anzahl Quizes = ". count($result));
+
   return $result;
 }    
 
@@ -242,6 +243,7 @@ function getQuizImages($quiz){
       $result[] = basename($q->img);
     }
   } 
+  logMe("Anzahl images für ".$quiz." = ". count($result));
   return $result;
 }
 
@@ -250,6 +252,7 @@ function getReferencedImages(){
   foreach(getQuizes() as $quiz){
     $result = array_merge($result, getQuizImages($quiz));    
   }
+  logMe("Gesamtanzahl refernzierter Bilder = ". count($result));
   return $result;
 }
 
