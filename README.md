@@ -5,7 +5,7 @@ Availabe in german only.
 Zum Start ist dieses Tool vorläufig nur in deutsch verfügbar.
 
 ## Version
-0.0.6-SNAPSHOT
+0.0.6
 
 ## Demo
 Eine Demo-Version ist verfügbar unter der Adresse:
@@ -52,6 +52,13 @@ Bei der Plazierung ist auf die Kommasetzung zu achten.
 
 ### 0.0.6
 * auf lokale jquery 3.2.1-Kopie migriert
+* Rollback auf gesicherte Versionsstände möglich
+* Anzahl der Fragen pro Runde konfigurierbar
+* Fehlerkorrekturen
+* Mailabsender bei Systemmails konfigurierbar
+* Quiz-Bildgröße konfigurierbar
+* Anzahl der Backupkopien konfigurierbar
+* Layout im Editor verbessert
 
 ### 0.0.5
 * separate PHP-Konfigurationsdatei
